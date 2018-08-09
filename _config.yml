@@ -81,8 +81,8 @@ theme: next
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
-deploy:
+deploy: 
   type: git
-  repo: https://github.com/Jocoo0326/Jocoo0326.github.io.git
+  repo: git@github.com:Jocoo0326/Jocoo0326.github.io.git
   branch: master
   message: update
