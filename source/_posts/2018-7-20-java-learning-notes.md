@@ -79,7 +79,7 @@ Runnable通常代表具体的业务逻辑，Thread代表操作系统线程的调
 
 
 ## Synchronized和ReentrantLock有什么区别？
-1. Synchronized是Java内建同步机制，提供了互斥的语义和可见性，一个线程获取锁，其他试图获取锁的线程只能等待或阻塞
+1. Synchronized是Java内建同步机制，提供了互斥的语义和可见性(volatile)，一个线程获取锁，其他试图获取锁的线程只能等待或阻塞
 2. ReentrantLock是再入锁，语义和Synchronized基本相同，通过调用lock方法获取锁，书写灵活，一般配合try-catch-finally，并在finally中调用unlock释放锁，当线程已获取了锁，lock方法会立即返回
 3. Reentrantlock提供更细粒度的同步操作，可以提供公平性(等待时间长的线程优先获取锁)，定义条件
 4. 通过lock.isHeldByCurrentThread可以判断当前线程是否拥有这个锁
