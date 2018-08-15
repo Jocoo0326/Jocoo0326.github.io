@@ -1,0 +1,160 @@
+---
+layout: post
+title: Java learning notes - 1
+date: 2018-07-15
+categories:
+- Java
+tags:
+- Java basic
+---
+
+Java基础知识总结-1:
+<!-- more -->
+## Java平台的特点
+1. Java平台的诞生解决了当时的一些痛点：
+- 对不同的平台，代码需要适配，然后编译对应的包
+- 内存的使用，分配和回收是一个非常棘手的问题，除了问题难于排查
+- 工程代码量快速增长，需要面向对象编程
+2. JVM将各平台的硬件差异封装起来了，这是跨平台的重要基础
+3. JVM引入内存管理，大大减轻程序员的负担
+4. 生来就是面向对象语言，语法简单明了易于学习，避免了指针的使用，但有些冗余，不够精炼
+5. 从编码->移植->编译->安装包(机器码)->执行的生产链发展为编码->编译->字节码->JVM->机器指令->执行的生产链中将与人参与的环节简单化，人性化，以提高整体链条的效率，是java成功的重要原因，也是很多技术发展变迁的源动力
+
+
+## Exception和Error的区别
+1. Exception和Error都继承了Throwable类，只有Throwable才能被throw或者catch
+2. Error是出现了严重的错误导致JVM处于非正常状态、不可恢复状态，常见的有OutOfMemoryError，NoClassDefFoundError等
+3. Exception分为checked Exception和unchecked Exception(RuntimeException)，可检查异常必须显示捕获处理，使程序恢复运行流程，不检查异常即运行时异常，一般有程序员错误导致
+4. try-with-resource可以用于关闭资源
+5. try-catch-finally 应该不推诿和延时异常的处理，不生吞异常，finally用于关闭资源和释放锁等，finally是一定会执行的代码块，注意和return、continue、break跳转语句的使用，执行这些跳转语句之前，会先执行finally块中代码，然后再跳转， finally应避免覆盖try中返回值
+``` java
+public int test() {                     
+    try {                                 
+        tryBlock = 0;                       
+        System.out.println("try block");    
+        return tryBlock;                    
+    } catch (Exception e) {               
+        catchBlock = 1;                     
+        System.out.println("catch block");  
+    } finally {                           
+        finallyBlock = 2;                   
+        tryBlock++;                         
+        System.out.println("finally block");
+    }                                     
+    methodBlock = 3;                      
+    return methodBlock;                   
+}                                       
+output:
+    try block
+    finally block
+    0
+```
+
+## 强引用、软引用、弱引用、幻象引用的区别
+1. 主要体现在对象的可达性(reachable)状态和对垃圾回收的影响
+- JVM会把虚拟机栈和本地方法栈正在引用的对象、静态属性引用的对象和常量，作为GC Roots
+2. 强引用，常见的对象引用，超出了作用域或者显示赋值为null，就可以被垃圾回收了
+3. 软引用，当JVM内存不足时，会清除软引用指向的对象，常用于实现内存敏感的缓存，内存足够的时候缓存，不够的时候清除
+4. 弱引用， 当GC触发时会立即被回收，仅提供一种访问对象的途径，异步操作callback宿主类常用，防止内存泄漏，同样也是缓存的实现选择
+5. 幻象引用，不能通过它访问对象，get总是返回null，仅仅提供了一种确保对象被finalize以后，执行某种操作的机会，比如post-mortem清理机制
+
+## String、StringBuffer和StringBuilder的区别
+1. String是final class，所有属性也是final的，属于典型的Immutable类，由于它的不可变性，类似拼接、裁剪等操作都会产生新的String对象
+2. StringBuffer为了解决中间字符串的问题而生，使用append和add可以将字符串添加到已有序列的末尾或者指定位置，同时保证线程安全，通过将修改数据的方法加上synchronized实现，也会带来额外的性能开销
+3. StringBuilder功能上和StringBuffer一样，但去掉了线程安全的部分，减少了性能开销
+4. StringBuilder和StringBuffer都是继承自AbstractStringBuilder，区别就是修改数据的方法是否加了synchronized，数据是char[]，默认初始值是16，如果可以预计拼接的字符大小，应该提前指定，可以避免arraycopy
+5. 字符串通常都会占用很多内存，所以引入了字符串常量池，创建一个字符串时先判断池中是否已有相同字符串对象，有则使用池中对象，没有则创建字符串并放入池中，注意以下区别：
+``` java
+String str = "abc";// 通过直接量赋值方式，放入常量池
+String str1 = "abc";
+String str2 = new String("abc");// 通过new方式赋值，不放入常量池
+String str3 = new String("abcd");
+System.out.println(str == str1);// true
+System.out.println(str1 == "abc");// true
+System.out.println(str2 == "abc");// false
+System.out.println(str1 == str2);// false
+System.out.println(str1.equals(str2));// true
+System.out.println(str1 == str2.intern());// true
+System.out.println(str2 == str2.intern());// false
+System.out.println(str3 == str3.intern());// false
+System.out.println(str1.hashCode() == str2.hashCode());// true
+```
+6. intern()会检查常量池中是否有equals的字符串，有则返回池中对象，没有则放入池中，并返回池中对象
+7. JDK 8中字符串拼接操作会自动被javac转换成StringBuilder操作
+``` java
+String str = "a" + "b" + "c" + "d"; // 等同于 String str = "abcd";
+// 字节码: ldc #2  // string abcd
+String a = "a"; String str = a + "b" + "c" + "d";// 字节码:
+ 0: ldc           #2              // String a
+ 2: astore_1
+ 3: new           #3              // class java/lang/StringBuilder
+ 6: dup
+ 7: invokespecial #4              // Method java/lang/StringBuilder."<init>":()V
+10: aload_1
+11: invokespecial #5              // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+14: ldc           #6              // String bcd
+16: invokespecial #5              // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+19: invokespecial #7              // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+22: astore_2
+```
+8. Java中的char是两个bytes大小, UTF-16
+
+## 动态代理的原理
+1. 基于反射实现，反射是赋予程序运行时的自省能力(introspect)
+- 运行时获得一个对象的CLASS
+- 运行时构造任意一个类的对象
+- 运行时获得一个类具有的成员和方法
+- 运行时调用一个对象的方法
+- Method.invoke实际委派给MethodAccessor来处理, MethodAccessor有两个实现, 一个通过本地方法实现反射调用, 一个动态实现(使用委派模式), 动态实现比本地实现快20倍, 因为动态实现无需Java~native层的切换, 由于生成字节码十分耗时, 仅一次调用反而比本地实现慢3~4倍, 考虑到这种情况, JVM设置了一个阈值15(-Dsun.reflect.inflationThreshold=15调整), <=15本地实现(委托给NativeMethodAccessorImpl), >15动态实现(GeneratedMethodAccessor) 
+- 变长参数方法，字节码层面最后一个参数会是Object数组
+2. 代理：将调用者与实现者解耦，对实现者透明，如日志，事物处理
+3. 动态：代理的interface(方法集)动态变化，编码时指定方法实现规则，静态代理是编码时确定了代理方法
+4. JDK proxy
+- 最小化依赖，减少依赖意味着简化开发和维护，JDK本身支持，可能比cglib更加可靠
+- 平滑进行JDK版本升级，而字节码类库通常需要进行更新以保证在新版Java上能够试用
+- 代码实现简单
+5. cglib
+- 有时候代理目标不便实现额外的接口，限定调用者实现特定接口有些侵入性，cglib动态代理就没有这个限制(子类化方式实现)
+- 只操作我们关心的类，而不必为其他相关类增加工作量
+- 高性能
+
+## Okio总结
+1. 弥补了原生java.io的不足
+- 原生io大量使用装饰者模式，实现字符流的读取通常要包装很多层，涉及到很多类
+- 原生io的缓冲机制效率不高
+2. io操作少不了缓冲机制，Okio提供了非常高效的缓冲机制Buffer，主要体现在Buffer到Buffer的读写尽可能的减少数据拷贝，而使用Segment的转移
+3. 接口简单明了，一个类中提供了所有的操作方法，字符、字节读写通过方法区分(readByte, readString, etc)，读写操作粒度丰富，功能强大，调用简单，典型的例子：
+``` java
+try (BufferdSource bufferedSource = Okio.buffer(Okio.source(socket))) {
+  String content = bufferedsource.readUTF8();
+} catch (IOException e) {
+  e.printStackTrace();
+}
+```
+
+## int和Integer有什么区别
+1. int是原始类型，Integer是对象类型，Integer是int的包装类，它有一个int类型的字段存储数据，并且提供了基本操作，如数学操作、int和String之间转换等
+2. Integer可以根据上下文自动装箱和拆箱，实践中大部分数据操作都集中在有限的、较小的数值范围，所以Integer实现了值缓存，范围-128~127
+3. 自动装箱算是一种语法糖，javac替我们自动把装箱装换成Integer.valueOf()(能够利用值缓存)，把拆箱转换成Integer.intValue()
+4. Boolean缓存了Boolean.TRUE/FALSE，Short缓存了-128~127，Byte缓存了-128~127，Character缓存了'\u0000'~'\u007F'
+5. 应避免不必要的装箱、拆箱行为
+6. 缓存上限值可以根据需要调整，但下限固定是-128，JVM提供了参数设置：
+     - -XX:AutoBoxCacheMax=N
+7. value是private final int，保证基本信息的安全和并发编程中线程安全
+8. 有趣的方法：
+bitCount(int i)计算i二进制表示数中各位上1的个数，引用Hackers Delight中5-2算法:
+``` java
+i = i - ((i >>> 1) & 0x55555555); // 考虑将两位二进制数1的和表示出来，0x11 -> 0x10，i = 2a + b -> a + b = i - a = i - ((i >>> 1) & 0x01)
+i = (i & 0x33333333) + ((i >>> 2) & 0x33333333); // 其他高位以此类推
+i = (i + (i >>> 4)) & 0x0F0F0F0F;
+i = i + (i >>> 8); // 最大值是32，只需考虑低6位
+i = i + (i >>> 16);
+return i & 0x3f;
+```
+
+## Vector、ArrayList、LinkedList有何区别
+1. Vector是Java早期提供的线程安全的动态数组，内部使用对象数组保存数据，具有自动扩容能力
+2. ArrayList是应用更为广泛的动态数组实现，非线程安全，具有自动扩容能力，(初始大小是0，add一个元素后是10)，ArrayList扩容增加50%，Vector增加1倍
+3. LinkedList是双向链表，不需要扩容，非线程安全
+4. Vector和ArrayList作为动态数组，内部元素以数组形式顺序存储，所以非常适合随机访问的场合，除了尾部插入和删除元素，往往性能比较差，往中间插入一个元素，需要移动后续所有元素
+5. LinkedList进行节点插入、删除却要高效的多，但是随机访问性能要比动态数组慢
