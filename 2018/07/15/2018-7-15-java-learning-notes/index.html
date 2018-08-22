@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-corner-indicator.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java basic," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Java基础知识总结-1:">
+<meta name="keywords" content="Java basic">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java learning notes - 1">
+<meta property="og:url" content="http://Jocoo0326.github.io/2018/07/15/2018-7-15-java-learning-notes/index.html">
+<meta property="og:site_name" content="Jocoo&#39;s blog">
+<meta property="og:description" content="Java基础知识总结-1:">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-17T06:58:17.716Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java learning notes - 1">
+<meta name="twitter:description" content="Java基础知识总结-1:">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://Jocoo0326.github.io/2018/07/15/2018-7-15-java-learning-notes/"/>
+
+
+
+
+
+  <title>Java learning notes - 1 | Jocoo's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jocoo's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">All problems in computer science can be solved by another level of indirection.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://Jocoo0326.github.io/2018/07/15/2018-7-15-java-learning-notes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jocoo">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jocoo's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java learning notes - 1</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-07-15T00:00:00+08:00">
+                2018-07-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/07/15/2018-7-15-java-learning-notes/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2018/07/15/2018-7-15-java-learning-notes/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Java基础知识总结-1:<br><a id="more"></a></p>
+<h2 id="Java平台的特点"><a href="#Java平台的特点" class="headerlink" title="Java平台的特点"></a>Java平台的特点</h2><ol>
+<li>Java平台的诞生解决了当时的一些痛点：</li>
+</ol>
+<ul>
+<li>对不同的平台，代码需要适配，然后编译对应的包</li>
+<li>内存的使用，分配和回收是一个非常棘手的问题，除了问题难于排查</li>
+<li>工程代码量快速增长，需要面向对象编程</li>
+</ul>
+<ol start="2">
+<li>JVM将各平台的硬件差异封装起来了，这是跨平台的重要基础</li>
+<li>JVM引入内存管理，大大减轻程序员的负担</li>
+<li>生来就是面向对象语言，语法简单明了易于学习，避免了指针的使用，但有些冗余，不够精炼</li>
+<li>从编码-&gt;移植-&gt;编译-&gt;安装包(机器码)-&gt;执行的生产链发展为编码-&gt;编译-&gt;字节码-&gt;JVM-&gt;机器指令-&gt;执行的生产链中将与人参与的环节简单化，人性化，以提高整体链条的效率，是java成功的重要原因，也是很多技术发展变迁的源动力</li>
+</ol>
+<h2 id="Exception和Error的区别"><a href="#Exception和Error的区别" class="headerlink" title="Exception和Error的区别"></a>Exception和Error的区别</h2><ol>
+<li>Exception和Error都继承了Throwable类，只有Throwable才能被throw或者catch</li>
+<li>Error是出现了严重的错误导致JVM处于非正常状态、不可恢复状态，常见的有OutOfMemoryError，NoClassDefFoundError等</li>
+<li>Exception分为checked Exception和unchecked Exception(RuntimeException)，可检查异常必须显示捕获处理，使程序恢复运行流程，不检查异常即运行时异常，一般由程序员错误导致</li>
+<li>try-with-resource可以用于关闭资源</li>
+<li>try-catch-finally 应该不推诿和延时异常的处理，不生吞异常，finally用于关闭资源和释放锁等，finally是一定会执行的代码块，注意和return、continue、break跳转语句的使用，执行这些跳转语句之前，会先执行finally块中代码，然后再跳转， finally应避免覆盖try中返回值<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">test</span><span class="params">()</span> </span>&#123;                     </span><br><span class="line">    <span class="keyword">try</span> &#123;                                 </span><br><span class="line">        tryBlock = <span class="number">0</span>;                       </span><br><span class="line">        System.out.println(<span class="string">"try block"</span>);    </span><br><span class="line">        <span class="keyword">return</span> tryBlock;                    </span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;               </span><br><span class="line">        catchBlock = <span class="number">1</span>;                     </span><br><span class="line">        System.out.println(<span class="string">"catch block"</span>);  </span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;                           </span><br><span class="line">        finallyBlock = <span class="number">2</span>;                   </span><br><span class="line">        tryBlock++;                         </span><br><span class="line">        System.out.println(<span class="string">"finally block"</span>);</span><br><span class="line">    &#125;                                     </span><br><span class="line">    methodBlock = <span class="number">3</span>;                      </span><br><span class="line">    <span class="keyword">return</span> methodBlock;                   </span><br><span class="line">&#125;                                       </span><br><span class="line">output:</span><br><span class="line">    <span class="keyword">try</span> block</span><br><span class="line">    <span class="keyword">finally</span> block</span><br><span class="line">    <span class="number">0</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="强引用、软引用、弱引用、幻象引用的区别"><a href="#强引用、软引用、弱引用、幻象引用的区别" class="headerlink" title="强引用、软引用、弱引用、幻象引用的区别"></a>强引用、软引用、弱引用、幻象引用的区别</h2><ol>
+<li>主要体现在对象的可达性(reachable)状态和对垃圾回收的影响</li>
+</ol>
+<ul>
+<li>JVM会把虚拟机栈和本地方法栈正在引用的对象、静态属性引用的对象和常量，作为GC Roots</li>
+</ul>
+<ol start="2">
+<li>强引用，常见的对象引用，超出了作用域或者显示赋值为null，就可以被垃圾回收了</li>
+<li>软引用，当JVM内存不足时，会清除软引用指向的对象，常用于实现内存敏感的缓存，内存足够的时候缓存，不够的时候清除</li>
+<li>弱引用， 当GC触发时会立即被回收，仅提供一种访问对象的途径，异步操作callback宿主类常用，防止内存泄漏，同样也是缓存的实现选择</li>
+<li>幻象引用，不能通过它访问对象，get总是返回null，仅仅提供了一种确保对象被finalize以后，执行某种操作的机会，比如post-mortem清理机制</li>
+</ol>
+<h2 id="String、StringBuffer和StringBuilder的区别"><a href="#String、StringBuffer和StringBuilder的区别" class="headerlink" title="String、StringBuffer和StringBuilder的区别"></a>String、StringBuffer和StringBuilder的区别</h2><ol>
+<li>String是final class，所有属性也是final的，属于典型的Immutable类，由于它的不可变性，类似拼接、裁剪等操作都会产生新的String对象</li>
+<li>StringBuffer为了解决中间字符串的问题而生，使用append和add可以将字符串添加到已有序列的末尾或者指定位置，同时保证线程安全，通过将修改数据的方法加上synchronized实现，也会带来额外的性能开销</li>
+<li>StringBuilder功能上和StringBuffer一样，但去掉了线程安全的部分，减少了性能开销</li>
+<li>StringBuilder和StringBuffer都是继承自AbstractStringBuilder，区别就是修改数据的方法是否加了synchronized，数据是char[]，默认初始值是16，如果可以预计拼接的字符大小，应该提前指定，可以避免arraycopy</li>
+<li><p>字符串通常都会占用很多内存，所以引入了字符串常量池，创建一个字符串时先判断池中是否已有相同字符串对象，有则使用池中对象，没有则创建字符串并放入池中，注意以下区别：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">String str = <span class="string">"abc"</span>;<span class="comment">// 通过直接量赋值方式，放入常量池</span></span><br><span class="line">String str1 = <span class="string">"abc"</span>;</span><br><span class="line">String str2 = <span class="keyword">new</span> String(<span class="string">"abc"</span>);<span class="comment">// 通过new方式赋值，不放入常量池</span></span><br><span class="line">String str3 = <span class="keyword">new</span> String(<span class="string">"abcd"</span>);</span><br><span class="line">System.out.println(str == str1);<span class="comment">// true</span></span><br><span class="line">System.out.println(str1 == <span class="string">"abc"</span>);<span class="comment">// true</span></span><br><span class="line">System.out.println(str2 == <span class="string">"abc"</span>);<span class="comment">// false</span></span><br><span class="line">System.out.println(str1 == str2);<span class="comment">// false</span></span><br><span class="line">System.out.println(str1.equals(str2));<span class="comment">// true</span></span><br><span class="line">System.out.println(str1 == str2.intern());<span class="comment">// true</span></span><br><span class="line">System.out.println(str2 == str2.intern());<span class="comment">// false</span></span><br><span class="line">System.out.println(str3 == str3.intern());<span class="comment">// false</span></span><br><span class="line">System.out.println(str1.hashCode() == str2.hashCode());<span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>intern()会检查常量池中是否有equals的字符串，有则返回池中对象，没有则放入池中，并返回池中对象</p>
+</li>
+<li><p>JDK 8中字符串拼接操作会自动被javac转换成StringBuilder操作</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">String str = <span class="string">"a"</span> + <span class="string">"b"</span> + <span class="string">"c"</span> + <span class="string">"d"</span>; <span class="comment">// 等同于 String str = "abcd";</span></span><br><span class="line"><span class="comment">// 字节码: ldc #2  // string abcd</span></span><br><span class="line">String a = <span class="string">"a"</span>; String str = a + <span class="string">"b"</span> + <span class="string">"c"</span> + <span class="string">"d"</span>;<span class="comment">// 字节码:</span></span><br><span class="line"> 0: ldc           #2              // String a</span><br><span class="line"> <span class="number">2</span>: astore_1</span><br><span class="line"> 3: new           #3              // class java/lang/StringBuilder</span><br><span class="line"> <span class="number">6</span>: dup</span><br><span class="line"> 7: invokespecial #4              // Method java/lang/StringBuilder."&lt;init&gt;":()V</span><br><span class="line"><span class="number">10</span>: aload_1</span><br><span class="line">11: invokespecial #5              // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;</span><br><span class="line">14: ldc           #6              // String bcd</span><br><span class="line">16: invokespecial #5              // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;</span><br><span class="line">19: invokespecial #7              // Method java/lang/StringBuilder.toString:()Ljava/lang/String;</span><br><span class="line"><span class="number">22</span>: astore_2</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Java中的char是两个bytes大小, UTF-16</p>
+</li>
+</ol>
+<h2 id="动态代理的原理"><a href="#动态代理的原理" class="headerlink" title="动态代理的原理"></a>动态代理的原理</h2><ol>
+<li>基于反射实现，反射是赋予程序运行时的自省能力(introspect)</li>
+</ol>
+<ul>
+<li>运行时获得一个对象的CLASS</li>
+<li>运行时构造任意一个类的对象</li>
+<li>运行时获得一个类具有的成员和方法</li>
+<li>运行时调用一个对象的方法</li>
+<li>Method.invoke实际委派给MethodAccessor来处理, MethodAccessor有两个实现, 一个通过本地方法实现反射调用, 一个动态实现(使用委派模式), 动态实现比本地实现快20倍, 因为动态实现无需Java~native层的切换, 由于生成字节码十分耗时, 仅一次调用反而比本地实现慢3~4倍, 考虑到这种情况, JVM设置了一个阈值15(-Dsun.reflect.inflationThreshold=15调整), &lt;=15本地实现(委托给NativeMethodAccessorImpl), &gt;15动态实现(GeneratedMethodAccessor) </li>
+<li>变长参数方法，字节码层面最后一个参数会是Object数组</li>
+</ul>
+<ol start="2">
+<li>代理：将调用者与实现者解耦，对实现者透明，如日志，事物处理</li>
+<li>动态：代理的interface(方法集)动态变化，编码时指定方法实现规则，静态代理是编码时确定了代理方法</li>
+<li>JDK proxy</li>
+</ol>
+<ul>
+<li>最小化依赖，减少依赖意味着简化开发和维护，JDK本身支持，可能比cglib更加可靠</li>
+<li>平滑进行JDK版本升级，而字节码类库通常需要进行更新以保证在新版Java上能够试用</li>
+<li>代码实现简单</li>
+</ul>
+<ol start="5">
+<li>cglib</li>
+</ol>
+<ul>
+<li>有时候代理目标不便实现额外的接口，限定调用者实现特定接口有些侵入性，cglib动态代理就没有这个限制(子类化方式实现)</li>
+<li>只操作我们关心的类，而不必为其他相关类增加工作量</li>
+<li>高性能</li>
+</ul>
+<h2 id="Okio总结"><a href="#Okio总结" class="headerlink" title="Okio总结"></a>Okio总结</h2><ol>
+<li>弥补了原生java.io的不足</li>
+</ol>
+<ul>
+<li>原生io大量使用装饰者模式，实现字符流的读取通常要包装很多层，涉及到很多类</li>
+<li>原生io的缓冲机制效率不高</li>
+</ul>
+<ol start="2">
+<li>io操作少不了缓冲机制，Okio提供了非常高效的缓冲机制Buffer，主要体现在Buffer到Buffer的读写尽可能的减少数据拷贝，而使用Segment的转移</li>
+<li>接口简单明了，一个类中提供了所有的操作方法，字符、字节读写通过方法区分(readByte, readString, etc)，读写操作粒度丰富，功能强大，调用简单，典型的例子：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> (BufferdSource bufferedSource = Okio.buffer(Okio.source(socket))) &#123;</span><br><span class="line">  String content = bufferedsource.readUTF8();</span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">  e.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="int和Integer有什么区别"><a href="#int和Integer有什么区别" class="headerlink" title="int和Integer有什么区别"></a>int和Integer有什么区别</h2><ol>
+<li>int是原始类型，Integer是对象类型，Integer是int的包装类，它有一个int类型的字段存储数据，并且提供了基本操作，如数学操作、int和String之间转换等</li>
+<li>Integer可以根据上下文自动装箱和拆箱，实践中大部分数据操作都集中在有限的、较小的数值范围，所以Integer实现了值缓存，范围-128~127</li>
+<li>自动装箱算是一种语法糖，javac替我们自动把装箱装换成Integer.valueOf()(能够利用值缓存)，把拆箱转换成Integer.intValue()</li>
+<li>Boolean缓存了Boolean.TRUE/FALSE，Short缓存了-128~127，Byte缓存了-128~127，Character缓存了’\u0000’~’\u007F’</li>
+<li>应避免不必要的装箱、拆箱行为</li>
+<li>缓存上限值可以根据需要调整，但下限固定是-128，JVM提供了参数设置：<ul>
+<li>-XX:AutoBoxCacheMax=N</li>
+</ul>
+</li>
+<li>value是private final int，保证基本信息的安全和并发编程中线程安全</li>
+<li>有趣的方法：<br>bitCount(int i)计算i二进制表示数中各位上1的个数，引用Hackers Delight中5-2算法:<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">i = i - ((i &gt;&gt;&gt; <span class="number">1</span>) &amp; <span class="number">0x55555555</span>); <span class="comment">// 考虑将两位二进制数1的和表示出来，0x11 -&gt; 0x10，i = 2a + b -&gt; a + b = i - a = i - ((i &gt;&gt;&gt; 1) &amp; 0x01)</span></span><br><span class="line">i = (i &amp; <span class="number">0x33333333</span>) + ((i &gt;&gt;&gt; <span class="number">2</span>) &amp; <span class="number">0x33333333</span>); <span class="comment">// 其他高位以此类推</span></span><br><span class="line">i = (i + (i &gt;&gt;&gt; <span class="number">4</span>)) &amp; <span class="number">0x0F0F0F0F</span>;</span><br><span class="line">i = i + (i &gt;&gt;&gt; <span class="number">8</span>); <span class="comment">// 最大值是32，只需考虑低6位</span></span><br><span class="line">i = i + (i &gt;&gt;&gt; <span class="number">16</span>);</span><br><span class="line"><span class="keyword">return</span> i &amp; <span class="number">0x3f</span>;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="Vector、ArrayList、LinkedList有何区别"><a href="#Vector、ArrayList、LinkedList有何区别" class="headerlink" title="Vector、ArrayList、LinkedList有何区别"></a>Vector、ArrayList、LinkedList有何区别</h2><ol>
+<li>Vector是Java早期提供的线程安全的动态数组，内部使用对象数组保存数据，具有自动扩容能力</li>
+<li>ArrayList是应用更为广泛的动态数组实现，非线程安全，具有自动扩容能力，(初始大小是0，add一个元素后是10)，ArrayList扩容增加50%，Vector增加1倍</li>
+<li>LinkedList是双向链表，不需要扩容，非线程安全</li>
+<li>Vector和ArrayList作为动态数组，内部元素以数组形式顺序存储，所以非常适合随机访问的场合，除了尾部插入和删除元素，往往性能比较差，往中间插入一个元素，需要移动后续所有元素</li>
+<li>LinkedList进行节点插入、删除却要高效的多，但是随机访问性能要比动态数组慢</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java-basic/" rel="tag"># Java basic</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/13/2017-9-13-Java-memory-model/" rel="next" title="Java内存模型">
+                <i class="fa fa-chevron-left"></i> Java内存模型
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/20/2018-7-20-java-learning-notes/" rel="prev" title="Java learning notes - 2">
+                Java learning notes - 2 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Jocoo" />
+            
+              <p class="site-author-name" itemprop="name">Jocoo</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Java平台的特点"><span class="nav-number">1.</span> <span class="nav-text">Java平台的特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exception和Error的区别"><span class="nav-number">2.</span> <span class="nav-text">Exception和Error的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#强引用、软引用、弱引用、幻象引用的区别"><span class="nav-number">3.</span> <span class="nav-text">强引用、软引用、弱引用、幻象引用的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#String、StringBuffer和StringBuilder的区别"><span class="nav-number">4.</span> <span class="nav-text">String、StringBuffer和StringBuilder的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动态代理的原理"><span class="nav-number">5.</span> <span class="nav-text">动态代理的原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Okio总结"><span class="nav-number">6.</span> <span class="nav-text">Okio总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#int和Integer有什么区别"><span class="nav-number">7.</span> <span class="nav-text">int和Integer有什么区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Vector、ArrayList、LinkedList有何区别"><span class="nav-number">8.</span> <span class="nav-text">Vector、ArrayList、LinkedList有何区别</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jocoo</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

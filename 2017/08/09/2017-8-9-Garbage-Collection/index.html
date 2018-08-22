@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-corner-indicator.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="GC," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="垃圾收集机制是Java的核心功能，解放了程序猿手动分配、释放内存的压力，极大的提高了开发效率，垃圾回收最早起源于LISP语言(Lisp还是一种函数式语言, 开创了许多先驱概念, 如动态类型、高阶函数等, 独具一格的是表达式, 现代语言越发展越像Lisp), 之后Smalltalk、python、java等都引入了垃圾收集机制。">
+<meta name="keywords" content="GC">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java Garbage Collection">
+<meta property="og:url" content="http://Jocoo0326.github.io/2017/08/09/2017-8-9-Garbage-Collection/index.html">
+<meta property="og:site_name" content="Jocoo&#39;s blog">
+<meta property="og:description" content="垃圾收集机制是Java的核心功能，解放了程序猿手动分配、释放内存的压力，极大的提高了开发效率，垃圾回收最早起源于LISP语言(Lisp还是一种函数式语言, 开创了许多先驱概念, 如动态类型、高阶函数等, 独具一格的是表达式, 现代语言越发展越像Lisp), 之后Smalltalk、python、java等都引入了垃圾收集机制。">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://jocoo0326.github.io/img/2017-8-9-Garbage-Collection-01.png">
+<meta property="og:image" content="http://jocoo0326.github.io/img/2017-8-9-Garbage-Collection-02.png">
+<meta property="og:image" content="http://jocoo0326.github.io/img/2017-8-9-Garbage-Collection-03.png">
+<meta property="og:image" content="http://jocoo0326.github.io/img/2017-8-9-Garbage-Collection-04.png">
+<meta property="og:image" content="http://jocoo0326.github.io/img/2017-8-9-Garbage-Collection-05.png">
+<meta property="og:updated_time" content="2018-08-16T09:50:38.168Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java Garbage Collection">
+<meta name="twitter:description" content="垃圾收集机制是Java的核心功能，解放了程序猿手动分配、释放内存的压力，极大的提高了开发效率，垃圾回收最早起源于LISP语言(Lisp还是一种函数式语言, 开创了许多先驱概念, 如动态类型、高阶函数等, 独具一格的是表达式, 现代语言越发展越像Lisp), 之后Smalltalk、python、java等都引入了垃圾收集机制。">
+<meta name="twitter:image" content="http://jocoo0326.github.io/img/2017-8-9-Garbage-Collection-01.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://Jocoo0326.github.io/2017/08/09/2017-8-9-Garbage-Collection/"/>
+
+
+
+
+
+  <title>Java Garbage Collection | Jocoo's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jocoo's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">All problems in computer science can be solved by another level of indirection.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://Jocoo0326.github.io/2017/08/09/2017-8-9-Garbage-Collection/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jocoo">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jocoo's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java Garbage Collection</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-09T00:00:00+08:00">
+                2017-08-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/08/09/2017-8-9-Garbage-Collection/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2017/08/09/2017-8-9-Garbage-Collection/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>垃圾收集机制是Java的核心功能，解放了程序猿手动分配、释放内存的压力，极大的提高了开发效率，垃圾回收最早起源于LISP语言(Lisp还是一种函数式语言, 开创了许多先驱概念, 如动态类型、高阶函数等, 独具一格的是表达式, 现代语言越发展越像Lisp), 之后Smalltalk、python、java等都引入了垃圾收集机制。<br><a id="more"></a><br>Java中常见的垃圾收集器：</p>
+<h2 id="引用计数法和可达性分析"><a href="#引用计数法和可达性分析" class="headerlink" title="引用计数法和可达性分析"></a>引用计数法和可达性分析</h2><p>垃圾收集，顾名思义，就是将已分配出去的不再使用的内存，再回收，以便再次分配，Java是面向对象的语言，垃圾内存便是指不再使用的对象，那这里的关键就在于：如何分辨一个对象是否存活?</p>
+<p>引用计数法: 最开始人们使用引用计数法, 就是为该对象维护一个引用计数器, 来维护该对象的引用次数, 若该对象的引用计数大于0, 说明该对象是存活的, 若等于0, 说明该对象已经死亡, 可以回收了; 当该对象被引用时, 引用计数+1, 如果引用指向其他对象, 则引用计数-1; 但是引用计数法无法解决循环引用的问题, 如a对象和b对象相互引用, 则他们的引用计数都不为0, 但他们和外界的对象都没有引用关系, 应该属于垃圾对象, 此时引用计数法就无法回收这样的对象;</p>
+<p><img src="/img/2017-8-9-Garbage-Collection-01.png" alt="a对象和b对象循环引用"></p>
+<p>可达性分析法: 为了解决引用计数法的弊端, 现代主流回收器采用的是可达性分析法, 其实质在于将一系列GC Roots作为初始的存活对象合集(live set), 然后从该集合出发, 找出所有能被该集合引用的对象, 并加入到该集合中, 这个过程就称为”标记”(mark), 最后, 未被加入到集合的对象就是可以回收的;</p>
+<p><img src="/img/2017-8-9-Garbage-Collection-02.png" alt=""></p>
+<p>哪些对象可以作为GC Roots呢? 我们可以近似理解为由堆外指向堆内的引用, 包括以下几种:</p>
+<ul>
+<li>Java方法栈帧中的局部变量</li>
+<li>已加载类的静态变量</li>
+<li>JNI handles</li>
+<li>已启动且未停止的Java线程</li>
+</ul>
+<p>可达性分析法简洁明了, 但是多线程环境下, 判断对象是否可达并非那么容易, 一旦误判存活的对象为死亡对象, 导致回收了仍被引用的对象, 则会导致虚拟机崩溃</p>
+<h2 id="Stop-the-world-以及安全点"><a href="#Stop-the-world-以及安全点" class="headerlink" title="Stop-the-world 以及安全点"></a>Stop-the-world 以及安全点</h2><p>传统的解决方式采用简单粗暴的方法, 这便是stop-the-world, 停止其他非垃圾回收线程, 等待直到垃圾回收完成, 但不是任何时候都可以进入stop-the-world状态, Java虚拟机中是通过安全点机制来实现的, 当JVM收到stop-the-world请求时, 便会等待所有的线程达到安全点, 才允许stop-the-world线程进入独占工作。</p>
+<p>安全点是为了找到一个稳定的执行状态, 在这个执行状态下, Java虚拟机的堆栈不会发生变化, 以便能够安全的执行可达性分析。</p>
+<h2 id="垃圾回收算法"><a href="#垃圾回收算法" class="headerlink" title="垃圾回收算法"></a>垃圾回收算法</h2><ol>
+<li>copy算法: 即把内存分为两等分, 分别用from和to指针维护, 并且只是用from指针指向的内存区域来分配内存, 当发生垃圾回收时, 便把存活的对象复制到to指针指向的内存区域, 并且交换from和to中的内容, copy算法可以很好的内存碎片问题, 但缺点是堆空间的使用效率低下;</li>
+</ol>
+<p><img src="/img/2017-8-9-Garbage-Collection-03.png" alt=""></p>
+<ol start="2">
+<li>mark-and-sweep算法: 把死亡的对象所占据的内存标记为空闲内存, 并记录在一个空闲列表中, 当新建对象时, 便会从空闲列表中寻找空闲内存, 分配给新的对象, 缺点是容易造成内存碎片;</li>
+</ol>
+<p><img src="/img/2017-8-9-Garbage-Collection-04.png" alt=""></p>
+<ol start="3">
+<li>mark-and-compact算法: 把存活的对象聚集到内存区域的起始位置, 从而留下一段连续的内存, 这可以很好的解决内存碎片的问题, 代价是压缩算法的性能开销;</li>
+</ol>
+<p><img src="/img/2017-8-9-Garbage-Collection-05.png" alt=""></p>
+<p>当然, 实践中会综合使用上述的几种算法, 以规避他们缺点。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/GC/" rel="tag"># GC</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/06/2017-6-6-ThreadPoolExecutor/" rel="next" title="Deep into ThreadPoolExecutor">
+                <i class="fa fa-chevron-left"></i> Deep into ThreadPoolExecutor
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/13/2017-9-13-Java-memory-model/" rel="prev" title="Java内存模型">
+                Java内存模型 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Jocoo" />
+            
+              <p class="site-author-name" itemprop="name">Jocoo</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#引用计数法和可达性分析"><span class="nav-number">1.</span> <span class="nav-text">引用计数法和可达性分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Stop-the-world-以及安全点"><span class="nav-number">2.</span> <span class="nav-text">Stop-the-world 以及安全点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#垃圾回收算法"><span class="nav-number">3.</span> <span class="nav-text">垃圾回收算法</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jocoo</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
