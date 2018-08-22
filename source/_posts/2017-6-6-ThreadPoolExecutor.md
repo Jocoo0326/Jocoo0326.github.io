@@ -292,7 +292,7 @@ private void interruptIdleWorkers(boolean onlyOne) {
     }
 }
 ```
-runWorker就是firstTask或者从任务队列中获取一个任务，然后执行, 循环此过程, 执行任务的过程中lock, 表示工作状态,其他地方空闲中断操作便会失败(如上分析), 此处getTask时关键
+runWorker就是firstTask或者从任务队列中获取一个任务，然后执行, 循环此过程, 执行任务的过程中lock, 表示工作状态,其他地方空闲中断操作便会失败(如上分析), 此处getTask是关键
 ``` java
 private Runnable getTask() {
     boolean timedOut = false; // Did the last poll() time out?

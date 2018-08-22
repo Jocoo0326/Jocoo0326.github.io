@@ -24,7 +24,7 @@ Java基础知识总结-1:
 ## Exception和Error的区别
 1. Exception和Error都继承了Throwable类，只有Throwable才能被throw或者catch
 2. Error是出现了严重的错误导致JVM处于非正常状态、不可恢复状态，常见的有OutOfMemoryError，NoClassDefFoundError等
-3. Exception分为checked Exception和unchecked Exception(RuntimeException)，可检查异常必须显示捕获处理，使程序恢复运行流程，不检查异常即运行时异常，一般有程序员错误导致
+3. Exception分为checked Exception和unchecked Exception(RuntimeException)，可检查异常必须显示捕获处理，使程序恢复运行流程，不检查异常即运行时异常，一般由程序员错误导致
 4. try-with-resource可以用于关闭资源
 5. try-catch-finally 应该不推诿和延时异常的处理，不生吞异常，finally用于关闭资源和释放锁等，finally是一定会执行的代码块，注意和return、continue、break跳转语句的使用，执行这些跳转语句之前，会先执行finally块中代码，然后再跳转， finally应避免覆盖try中返回值
 ``` java
