@@ -698,7 +698,7 @@ pace_theme: pace-theme-corner-indicator
 canvas_nest: false
 
 # three_waves
-three_waves: true
+three_waves: false
 
 # canvas_lines
 canvas_lines: false
