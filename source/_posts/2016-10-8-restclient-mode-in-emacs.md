@@ -9,7 +9,7 @@ tags:
 ---
 
 开发中常常需要debug后台的service工具，比如ruby实现的rest-client，intellij-idea自带rest client tool，vim编辑器也有vim-http-client，今天要介绍的是emacs中的restclient-mode
-<!-- mode -->
+<!-- more -->
 emacs中的restclient-mode支持请求头参数配置，添加请求体数据，格式化xml/json数据，同时还支持显示图片，前提是编译时加入图片库的功能，Linux中默认配置，但是Windows对应版本却没有，官方下载的emacs也不行，所以需要自己编译Emacs，参见[Windows中编译emacs 64bit](/2016/09/06/2016-9-6-building-emacs-w64-with-msys2/)
 
 首先从melpa中安装restclient，至于国内使用的elpa源参见我的[Emacs配置文件](https://github.com/Jocoo0326/emacs.d)
