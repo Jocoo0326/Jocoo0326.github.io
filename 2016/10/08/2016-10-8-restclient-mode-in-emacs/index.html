@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-corner-indicator.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="restclient," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="开发中常常需要debug后台的service工具，比如ruby实现的rest-client，intellij-idea自带rest client tool，vim编辑器也有vim-http-client，今天要介绍的是emacs中的restclient-modeemacs中的restclient-mode支持请求头参数配置，添加请求体数据，格式化xml/json数据，同时还支持显示图片，前提是编译">
+<meta name="keywords" content="restclient">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Emacs中的restclient-mode">
+<meta property="og:url" content="http://Jocoo0326.github.io/2016/10/08/2016-10-8-restclient-mode-in-emacs/index.html">
+<meta property="og:site_name" content="Jocoo&#39;s blog">
+<meta property="og:description" content="开发中常常需要debug后台的service工具，比如ruby实现的rest-client，intellij-idea自带rest client tool，vim编辑器也有vim-http-client，今天要介绍的是emacs中的restclient-modeemacs中的restclient-mode支持请求头参数配置，添加请求体数据，格式化xml/json数据，同时还支持显示图片，前提是编译">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-27T07:55:56.680Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Emacs中的restclient-mode">
+<meta name="twitter:description" content="开发中常常需要debug后台的service工具，比如ruby实现的rest-client，intellij-idea自带rest client tool，vim编辑器也有vim-http-client，今天要介绍的是emacs中的restclient-modeemacs中的restclient-mode支持请求头参数配置，添加请求体数据，格式化xml/json数据，同时还支持显示图片，前提是编译">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://Jocoo0326.github.io/2016/10/08/2016-10-8-restclient-mode-in-emacs/"/>
+
+
+
+
+
+  <title>Emacs中的restclient-mode | Jocoo's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jocoo's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">All problems in computer science can be solved by another level of indirection.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://Jocoo0326.github.io/2016/10/08/2016-10-8-restclient-mode-in-emacs/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jocoo">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jocoo's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Emacs中的restclient-mode</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-10-08T00:00:00+08:00">
+                2016-10-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/tools/" itemprop="url" rel="index">
+                    <span itemprop="name">tools</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2016/10/08/2016-10-8-restclient-mode-in-emacs/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2016/10/08/2016-10-8-restclient-mode-in-emacs/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>开发中常常需要debug后台的service工具，比如ruby实现的rest-client，intellij-idea自带rest client tool，vim编辑器也有vim-http-client，今天要介绍的是emacs中的restclient-mode<br><!-- mode --><br>emacs中的restclient-mode支持请求头参数配置，添加请求体数据，格式化xml/json数据，同时还支持显示图片，前提是编译时加入图片库的功能，Linux中默认配置，但是Windows对应版本却没有，官方下载的emacs也不行，所以需要自己编译Emacs，参见<a href="/2016/09/06/2016-9-6-building-emacs-w64-with-msys2/">Windows中编译emacs 64bit</a></p>
+<p>首先从melpa中安装restclient，至于国内使用的elpa源参见我的<a href="https://github.com/Jocoo0326/emacs.d" target="_blank" rel="noopener">Emacs配置文件</a><br>然后M-x启动restclient-mode</p>
+<p>常用快捷键：</p>
+<ul>
+<li>C-c C-c: runs the query under the cursor, tries to pretty-print the response (if possible)</li>
+<li>C-c C-r: same, but doesn’t do anything with the response, just shows the buffer</li>
+<li>C-c C-v: same as C-c C-c, but doesn’t switch focus to other window</li>
+</ul>
+<h3 id="example"><a href="#example" class="headerlink" title="example"></a>example</h3><p>Get请求并设置请求头<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET https://api.github.com</span><br><span class="line">User-Agent: Emacs Restclient</span><br></pre></td></tr></table></figure></p>
+<p>Response:<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"current_user_url"</span>: <span class="string">"https://api.github.com/user"</span>,</span><br><span class="line">  <span class="attr">"current_user_authorizations_html_url"</span>: <span class="string">"https://github.com/settings/connections/applications&#123;/client_id&#125;"</span>,</span><br><span class="line">  <span class="attr">"authorizations_url"</span>: <span class="string">"https://api.github.com/authorizations"</span>,</span><br><span class="line">  <span class="attr">"code_search_url"</span>: <span class="string">"https://api.github.com/search/code?q=&#123;query&#125;&#123;&amp;page,per_page,sort,order&#125;"</span>,</span><br><span class="line">  <span class="attr">"commit_search_url"</span>: <span class="string">"https://api.github.com/search/commits?q=&#123;query&#125;&#123;&amp;page,per_page,sort,order&#125;"</span>,</span><br><span class="line">  <span class="attr">"emails_url"</span>: <span class="string">"https://api.github.com/user/emails"</span>,</span><br><span class="line">  <span class="attr">"emojis_url"</span>: <span class="string">"https://api.github.com/emojis"</span>,</span><br><span class="line">  <span class="attr">"events_url"</span>: <span class="string">"https://api.github.com/events"</span>,</span><br><span class="line">  <span class="attr">"feeds_url"</span>: <span class="string">"https://api.github.com/feeds"</span>,</span><br><span class="line">  <span class="attr">"followers_url"</span>: <span class="string">"https://api.github.com/user/followers"</span>,</span><br><span class="line">  <span class="attr">"following_url"</span>: <span class="string">"https://api.github.com/user/following&#123;/target&#125;"</span>,</span><br><span class="line">  <span class="attr">"gists_url"</span>: <span class="string">"https://api.github.com/gists&#123;/gist_id&#125;"</span>,</span><br><span class="line">  <span class="attr">"hub_url"</span>: <span class="string">"https://api.github.com/hub"</span>,</span><br><span class="line">  <span class="attr">"issue_search_url"</span>: <span class="string">"https://api.github.com/search/issues?q=&#123;query&#125;&#123;&amp;page,per_page,sort,order&#125;"</span>,</span><br><span class="line">  <span class="attr">"issues_url"</span>: <span class="string">"https://api.github.com/issues"</span>,</span><br><span class="line">  <span class="attr">"keys_url"</span>: <span class="string">"https://api.github.com/user/keys"</span>,</span><br><span class="line">  <span class="attr">"notifications_url"</span>: <span class="string">"https://api.github.com/notifications"</span>,</span><br><span class="line">  <span class="attr">"organization_repositories_url"</span>: <span class="string">"https://api.github.com/orgs/&#123;org&#125;/repos&#123;?type,page,per_page,sort&#125;"</span>,</span><br><span class="line">  <span class="attr">"organization_url"</span>: <span class="string">"https://api.github.com/orgs/&#123;org&#125;"</span>,</span><br><span class="line">  <span class="attr">"public_gists_url"</span>: <span class="string">"https://api.github.com/gists/public"</span>,</span><br><span class="line">  <span class="attr">"rate_limit_url"</span>: <span class="string">"https://api.github.com/rate_limit"</span>,</span><br><span class="line">  <span class="attr">"repository_url"</span>: <span class="string">"https://api.github.com/repos/&#123;owner&#125;/&#123;repo&#125;"</span>,</span><br><span class="line">  <span class="attr">"repository_search_url"</span>: <span class="string">"https://api.github.com/search/repositories?q=&#123;query&#125;&#123;&amp;page,per_page,sort,order&#125;"</span>,</span><br><span class="line">  <span class="attr">"current_user_repositories_url"</span>: <span class="string">"https://api.github.com/user/repos&#123;?type,page,per_page,sort&#125;"</span>,</span><br><span class="line">  <span class="attr">"starred_url"</span>: <span class="string">"https://api.github.com/user/starred&#123;/owner&#125;&#123;/repo&#125;"</span>,</span><br><span class="line">  <span class="attr">"starred_gists_url"</span>: <span class="string">"https://api.github.com/gists/starred"</span>,</span><br><span class="line">  <span class="attr">"team_url"</span>: <span class="string">"https://api.github.com/teams"</span>,</span><br><span class="line">  <span class="attr">"user_url"</span>: <span class="string">"https://api.github.com/users/&#123;user&#125;"</span>,</span><br><span class="line">  <span class="attr">"user_organizations_url"</span>: <span class="string">"https://api.github.com/user/orgs"</span>,</span><br><span class="line">  <span class="attr">"user_repositories_url"</span>: <span class="string">"https://api.github.com/users/&#123;user&#125;/repos&#123;?type,page,per_page,sort&#125;"</span>,</span><br><span class="line">  <span class="attr">"user_search_url"</span>: <span class="string">"https://api.github.com/search/users?q=&#123;query&#125;&#123;&amp;page,per_page,sort,order&#125;"</span></span><br><span class="line">&#125;</span><br><span class="line">// GET https://api.github.com</span><br><span class="line">// HTTP/1.1 200 OK</span><br><span class="line">// Date: Mon, 27 Aug 2018 07:37:54 GMT</span><br><span class="line">// Content-Type: application/json; charset=utf-8</span><br><span class="line">// Content-Length: 2039</span><br><span class="line">// Server: GitHub.com</span><br><span class="line">// Status: 200 OK</span><br><span class="line">// X-RateLimit-Limit: 60</span><br><span class="line">// X-RateLimit-Remaining: 58</span><br><span class="line">// X-RateLimit-Reset: 1535359056</span><br><span class="line">// Cache-Control: public, max-age=60, s-maxage=60</span><br><span class="line">// Vary: Accept</span><br><span class="line">// ETag: "7dc470913f1fe9bb6c7355b50a0737bc"</span><br><span class="line">// X-GitHub-Media-Type: github.v3; format=json</span><br><span class="line">// Access-Control-Expose-Headers: ETag, Link, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval</span><br><span class="line">// Access-Control-Allow-Origin: *</span><br><span class="line">// Strict-Transport-Security: max-age=31536000; includeSubdomains; preload</span><br><span class="line">// X-Frame-Options: deny</span><br><span class="line">// X-Content-Type-Options: nosniff</span><br><span class="line">// X-XSS-Protection: 1; mode=block</span><br><span class="line">// Referrer-Policy: origin-when-cross-origin, strict-origin-when-cross-origin</span><br><span class="line">// Content-Security-Policy: default-src 'none'</span><br><span class="line">// X-Runtime-rack: 0.015700</span><br><span class="line">// Vary: Accept-Encoding</span><br><span class="line">// X-GitHub-Request-Id: 058C:2AEB:8AD659:BCC8BE:5B83AA40</span><br><span class="line">// Request duration: 0.545086s</span><br></pre></td></tr></table></figure></p>
+<p>Post请求, 设置请求头并提交json数据，json数据之前要有空行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">POST https://jira.atlassian.com/rest/api/2/search</span><br><span class="line">Content-Type: application/json</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    &quot;jql&quot;: &quot;project = HSP&quot;,</span><br><span class="line">    &quot;startAt&quot;: 0,</span><br><span class="line">    &quot;maxResults&quot;: 15,</span><br><span class="line">    &quot;fields&quot;: [</span><br><span class="line">        &quot;summary&quot;,</span><br><span class="line">        &quot;status&quot;,</span><br><span class="line">        &quot;assignee&quot;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>GET请求还能够显示图片<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># show image</span><br><span class="line">GET http://f.hiphotos.baidu.com/image/pic/item/e824b899a9014c08bbd92197077b02087bf4f426.jpg</span><br></pre></td></tr></table></figure></p>
+<p>Tips： restclient-mode以注释为请求的分割线(#开头)，再添加请求的时候最好加上注释</p>
+<h3 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h3><p>请求中常常有某些参数是相同的，此时可以定义一个buffer内变量<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">:user_name = Jocoo</span><br></pre></td></tr></table></figure></p>
+<p>还可以多行变量<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">:var = &lt;&lt;</span><br><span class="line">Authorization: :my-auth</span><br><span class="line">name: :user_name</span><br><span class="line">Content-Type: application/json</span><br><span class="line">User-Agent: SomeApp/1.0</span><br><span class="line">#</span><br></pre></td></tr></table></figure></p>
+<p>多行变量还可以执行elisp代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">:myvar := &lt;&lt;</span><br><span class="line">(some-long-elisp</span><br><span class="line">    (code spanning many lines)</span><br><span class="line">#</span><br></pre></td></tr></table></figure></p>
+<p>通常的用法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># Some generic vars</span><br><span class="line"></span><br><span class="line">:my-auth = 319854857345898457457</span><br><span class="line">:my-headers = &lt;&lt;</span><br><span class="line">Authorization: :my-auth</span><br><span class="line">Content-Type: application/json</span><br><span class="line">User-Agent: SomeApp/1.0</span><br><span class="line">#</span><br><span class="line"></span><br><span class="line"># Update a user&apos;s name</span><br><span class="line"></span><br><span class="line">:user-id = 7</span><br><span class="line">:the-name := (format &quot;%s %s %d&quot; &apos;Neo (md5 &quot;The Chosen&quot;) (+ 100 1))</span><br><span class="line"></span><br><span class="line">PUT http://localhost:4000/users/:user-id/</span><br><span class="line">:my-headers</span><br><span class="line"></span><br><span class="line">&#123; &quot;name&quot;: &quot;:the-name&quot; &#125;</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/restclient/" rel="tag"># restclient</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/09/08/2016-9-8-quick-edit-functions-in-emacs/" rel="next" title="Emacs中自定义快速编辑功能">
+                <i class="fa fa-chevron-left"></i> Emacs中自定义快速编辑功能
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/06/2017-6-6-ThreadPoolExecutor/" rel="prev" title="Deep into ThreadPoolExecutor">
+                Deep into ThreadPoolExecutor <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Jocoo" />
+            
+              <p class="site-author-name" itemprop="name">Jocoo</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#example"><span class="nav-number">1.</span> <span class="nav-text">example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变量"><span class="nav-number">2.</span> <span class="nav-text">变量</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jocoo</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
