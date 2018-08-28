@@ -3,9 +3,9 @@ layout: post
 title: 7 Sort algorithms
 date: 2015-04-10
 categories:
-- Java
+- 算法
 tags:
-- Java basic
+- 排序
 ---
 
 7大经典排序算法
