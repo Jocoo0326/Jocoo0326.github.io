@@ -70,6 +70,116 @@ tags:
 ![](/img/2017-6-20-smooth-bezier-09.png)
 简化后等到(2)式：
 ![](/img/2017-6-20-smooth-bezier-10.png)
+将(1)和(2)组合消去P2,i和P2,i-1
+![](/img/2017-6-20-smooth-bezier-11.png)
+这符合三对角矩阵算法，但上面只有n-2个等式，还需要2个等式，我们可以找边界条件：
+![](/img/2017-6-20-smooth-bezier-12.png)
+由此我们可以等到(3)和(4)：
+![](/img/2017-6-20-smooth-bezier-13.png)
+![](/img/2017-6-20-smooth-bezier-14.png)
+使用(1)式将(3)中消去P2,0，得到：
+![](/img/2017-6-20-smooth-bezier-15.png)
+在(1)式和(2)式中，令i=n-1，带入(4)式中消去P2,n-1，得到：
+![](/img/2017-6-20-smooth-bezier-16.png)
+利用[三对角矩阵算法](https://zh.wikipedia.org/wiki/%E4%B8%89%E5%AF%B9%E8%A7%92%E7%9F%A9%E9%98%B5%E7%AE%97%E6%B3%95)可以算出P1,i，再由(1)和(4)式可以得到P2,i
+![](/img/2017-6-20-smooth-bezier-17.png)
+和
+![](/img/2017-6-20-smooth-bezier-18.png)
+
+### code snippet
+``` java
+private void makeCubicBezierPath(List<PointF> points, Path path) {
+    float[] p1_x;
+    float[] p1_y;
+    float[] p2_x;
+    float[] p2_y;
+    float[] k_x = new float[points.size()];
+    float[] k_y = new float[points.size()];
+    for (int i = 0; i < points.size(); i++) {
+        k_x[i] = points.get(i).x;
+        k_y[i] = points.get(i).y;
+    }
+    p1_x = computeCoordinateForP1(k_x);
+    p1_y = computeCoordinateForP1(k_y);
+    p2_x = computeCoordinateForP2(k_x, p1_x);
+    p2_y = computeCoordinateForP2(k_y, p1_y);
+
+    path.reset();
+    path.moveTo(points.get(0).x, points.get(0).y);
+
+    for (int i = 0; i < points.size() - 1; i++) {
+        path.cubicTo(p1_x[i], p1_y[i],
+                p2_x[i], p2_y[i],
+                points.get(i + 1).x, points.get(i + 1).y);
+    }
+}
+
+private float[] computeCoordinateForP1(float[] k) {
+    int n = k.length - 1;
+    float[] a = new float[n];
+    float[] b = new float[n];
+    float[] c = new float[n];
+    float[] d = new float[n];
+
+    /*left most segment*/
+    a[0] = 0;
+    b[0] = 2;
+    c[0] = 1;
+    d[0] = k[0] + 2 * k[1];
+
+    /*internal segments*/
+    for (int i = 1; i < n - 1; i++) {
+        a[i] = 1;
+        b[i] = 4;
+        c[i] = 1;
+        d[i] = 4 * k[i] + 2 * k[i + 1];
+    }
+
+    /*right segment*/
+    a[n - 1] = 2;
+    b[n - 1] = 7;
+    c[n - 1] = 0;
+    d[n - 1] = 8 * k[n - 1] + k[n];
+
+    return tdma(a, b, c, d);
+}
+
+private float[] computeCoordinateForP2(float[] k, float[] p1) {
+    int n = p1.length;
+    float[] p2 = new float[n];
+    for (int i = 0; i < n - 1; i++) {
+        p2[i] = 2 * k[i + 1] - p1[i + 1];
+    }
+    p2[n - 1] = 0.5f * (k[n] + p1[n - 1]);
+    return p2;
+}
+
+/**
+    * The tridiagonal matrix algorithm (TDMA), also known as the Thomas algorithm,
+    * is a simplified form of Gaussian elimination that can be used to solve tridiagonal
+    * systems of equations. A tridiagonal system for n unknowns may be written as
+    * a[i]*x[i-1]+b[i]*x[i]+c[i]*x[i+1]=d[i], where a[0]=0 and c[n-1]=0.
+    * <p>
+    */
+float[] tdma(float[] a, float[] b, float[] c, float[] d) {
+    int n = d.length;
+    float temp;
+    c[0] /= b[0];
+    d[0] /= b[0];
+    for (int i = 1; i < n; i++) {
+        temp = 1.0f / (b[i] - a[i] * c[i - 1]);
+        c[i] *= temp;
+        d[i] = (d[i] - a[i] * d[i - 1]) * temp;
+    }
+    float[] result = new float[n];
+    result[n - 1] = d[n - 1];
+    for (int i = n - 2; i >= 0; i--) {
+        result[i] = d[i] - c[i] * result[i + 1];
+    }
+    return result;
+}
+```
+
 
 ### reference
 [贝塞尔曲线扫盲](http://www.html-js.com/article/1628)
