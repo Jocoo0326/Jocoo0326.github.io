@@ -95,7 +95,7 @@
 <meta property="og:description" content="现代CPU的发展经历了, 从发展晶体管数量到提高多核心并行运行效率的发展历程, 但从串行运行切换到并行运行似乎没有想象中的那么简单, 现代CPU的运行速度和周边存储设备的速度相差几个数量级, 所以引入了高速缓存解决此问题, 不过同时也遇到新的问题: 缓存一致性问题.">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://jocoo0326.github.io/img/2017-09-13-Java_memory-model-01.png">
-<meta property="og:updated_time" content="2018-08-22T07:08:03.961Z">
+<meta property="og:updated_time" content="2018-08-30T09:07:42.087Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java内存模型">
 <meta name="twitter:description" content="现代CPU的发展经历了, 从发展晶体管数量到提高多核心并行运行效率的发展历程, 但从串行运行切换到并行运行似乎没有想象中的那么简单, 现代CPU的运行速度和周边存储设备的速度相差几个数量级, 所以引入了高速缓存解决此问题, 不过同时也遇到新的问题: 缓存一致性问题.">
@@ -388,7 +388,9 @@
 <h2 id="JMM的底层实现"><a href="#JMM的底层实现" class="headerlink" title="JMM的底层实现"></a>JMM的底层实现</h2><p>Java内存模型底层是通过内存屏障实现的, 对于JIT编译器, 它会在需要happens-before关系的代码中插入相应的读读、读写、写读、写写内存屏障, 对于volatile变量：</p>
 <ul>
 <li>对该变量的写操作之后，编译器会插入一个写屏障</li>
-<li>对该变量的读操作之前，编译器会插入一个读屏障<br>内存屏障能够在变量的写操作之后，保证其他线程对volatile变量的修改对当前线程可见，或者当前线程的修改对其他线程可见，换句话说，写屏障会通过强制刷新处理器缓存让其他线程拿到最新数据。</li>
+<li>对该变量的读操作之前，编译器会插入一个读屏障<br>内存屏障有两个作用：</li>
+<li>禁止指令重排序</li>
+<li>强制将写入高速缓存的脏数据写入主内存，或者invalidating缓存中的数据，从主内存读取<br>内存屏障能够在变量的写操作之后，保证其他线程对volatile变量的修改对当前线程可见，或者当前线程的修改对其他线程可见，换句话说，写屏障会通过强制刷新处理器缓存让其他线程拿到最新数据。</li>
 </ul>
 
       
