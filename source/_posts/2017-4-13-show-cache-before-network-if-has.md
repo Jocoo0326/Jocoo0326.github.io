@@ -47,3 +47,28 @@ addSubscribe(disposableObserver);
 ### publish操作符
 将原Observable转换成一个可连接的Observable，接收一个Function作为参数，目的是转换原Observable的数据，实际是一个map操作，将转换后的数据分发给后续订阅的Observer
 ![](http://reactivex.io/documentation/operators/images/publishConnect.c.png)
+### merge操作符
+将多个Observable合并成一个Observable，不做任何转换，合并多个Observable发射的数据，就像这些数据是同一个Observable发出的一样
+![](https://mcxiaoke.gitbooks.io/rxdocs/content/images/operators/merge.c.png)
+### takeUntil操作符
+发射原Observable的数据，直到第二个Observable发射一个数据或停止发射或发射一个错误为止
+![](https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/takeUntil.png)
+### 总结
+``` java
+cacheObservable.takeUntil(networkObservable);
+```
+所以上面的代码的作用是：若cacheObservable先于networkObservable发射数据，则取cacheObservable发射的数据，若networkObservable先于cacheObservable发射数据，则取消cacheObservable，不发射数据
+``` java
+Observable.merge(networkObservable, 
+        cacheObservable.takeUntil(networkObservable));
+```
+merge后的作用是：若cacheObservable先于networkObservable发射数据，则先取cacheObservable发射的数据，后取networkObservable发射的数据，若networkObservable先于cacheObservable发射数据，则只取networkObservable发射的数据
+``` java
+networkObservable.publish(new Function<Observable<DataModel>, ObservableSource<DataModel>>() {
+    @Override
+    public ObservableSource<DataModel> apply(@NonNull Observable<DataModel> localLifeModelObservable) throws Exception {
+        return Observable.merge(localLifeModelObservable, 
+                cacheObservable.takeUntil(localLifeModelObservable));
+    }
+});
+```
