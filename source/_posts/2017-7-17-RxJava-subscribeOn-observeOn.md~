@@ -1,0 +1,74 @@
+---
+layout: post
+title: RxJava的subscribeOn和observeOn区别与原理
+date: 2017-07-17
+categories:
+- android
+tags:
+- RxJava
+---
+
+RxJava代码语义清晰，数据产生、变换、消费一目了然，极大的提高了代码的可读性、维护性，同时还提供了另外一个特性------线程切换
+<!-- more -->
+RxJava用于线程切换的主要有2个操作符：subscribeOn和observeOn
+
+### 区别
+* subscrieOn
+指定Observable在特定的调度器上发射数据
+![](http://reactivex.io/documentation/operators/images/subscribeOn.c.png)
+- observeOn
+指定Observer在特定的调度器上接收Observable的数据
+![](http://reactivex.io/documentation/operators/images/observeOn.c.png)
+observeOn在收到错误通知时会立即回调observer的onError方法，即使之前还有未消费的数据，onError会在它们之前被传递
+![](http://reactivex.io/documentation/operators/images/observeOn.e.png)
+
+### 特性
+* subscribeOn
+Observable的subscribe方法将在操作符链条中第一个subscribeOn指定的调度器上执行，就算出现多个subscribeOn操作符也是如此
+* observeOn
+observeOn会将直接后续操作符在其指定的调度器上执行
+例如：
+``` java
+    Observable.create((ObservableOnSubscribe<String>) emitter -> {
+      System.out.println(Thread.currentThread());
+      String s = "from 1 created";
+      System.out.println(s);
+      emitter.onNext(s);
+      emitter.onComplete();
+    })
+        .subscribeOn(Schedulers.computation())
+        .map(s -> {
+          System.out.println(Thread.currentThread());
+          System.out.println(s + " in map");
+          return s;
+        })
+        .subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.io())
+        .filter(s -> {
+          System.out.println(Thread.currentThread());
+          System.out.println(s + " in filter");
+          return true;
+        })
+        .subscribeOn(Schedulers.newThread())
+        .observeOn(Schedulers.computation())
+        .subscribe(s -> {
+          System.out.println(Thread.currentThread());
+          System.out.println(s + " in observer");
+        });
+    try {
+      Thread.sleep(100);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+```
+结果：
+```
+Thread[RxComputationThreadPool-1,5,main]
+from 1 created
+Thread[RxComputationThreadPool-1,5,main]
+from 1 created in map
+Thread[RxCachedThreadScheduler-2,5,main]
+from 1 created in filter
+Thread[RxComputationThreadPool-2,5,main]
+from 1 created in observer
+```
