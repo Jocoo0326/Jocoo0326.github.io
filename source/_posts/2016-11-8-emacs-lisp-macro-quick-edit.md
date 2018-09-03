@@ -19,21 +19,19 @@ Emacs lisp code snippets：
 ;;------------------------------------------------------------------------------------------
 
 ;; operate region macro
-(defmacro my/region-operate (op-name unit op)
-  "locate region of unit then operate on it"
-  `(defun ,(intern (concat "my/" op-name "-" unit "-under")) (arg)
+(defmacro jocoo/region-operate (op-name unit op)
+  `(defun ,(intern (concat "jocoo/" op-name "-" unit "-under")) (arg)
      (interactive "p")
-     (let ((count (or arg 1)) (beg) (end))
-       (if (= count 1)
-	   (let ((bnd (bounds-of-thing-at-point (quote ,(intern unit)))))
-	     (setq beg (car bnd)
-		   end (cdr bnd)))
-	 (save-excursion
-	   (setq beg (point))
-	   (,(intern (concat "forward-" unit)) count)
-	   (setq end (point))))
+     (let ((count (or arg 1)) (beg) (end) (bound))
+       (setq bound (bounds-of-thing-at-point (quote ,(intern unit))))
+       (setq beg (car bound))
+       (save-excursion
+	 (goto-char beg)
+	 (,(intern (concat "forward-" unit)) count)
+	 (setq end (point)))
        (,op beg end)
        (message ,(concat op-name " " unit "%s") (if (> count 1) "s" "")))))
+
 
 ;; char operation
 (my/region-operate "copy" "char" copy-region-as-kill)
