@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-corner-indicator.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="RxJava," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="RxJava代码语义清晰，数据产生、变换、消费一目了然，极大的提高了代码的可读性、维护性，同时还提供了另外一个特性——线程切换">
+<meta name="keywords" content="RxJava">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RxJava的subscribeOn和observeOn区别与原理">
+<meta property="og:url" content="http://Jocoo0326.github.io/2017/07/17/2017-07-17-RxJava-subscribeOn-observeOn/index.html">
+<meta property="og:site_name" content="Jocoo&#39;s blog">
+<meta property="og:description" content="RxJava代码语义清晰，数据产生、变换、消费一目了然，极大的提高了代码的可读性、维护性，同时还提供了另外一个特性——线程切换">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://reactivex.io/documentation/operators/images/subscribeOn.c.png">
+<meta property="og:image" content="http://reactivex.io/documentation/operators/images/observeOn.c.png">
+<meta property="og:image" content="http://reactivex.io/documentation/operators/images/observeOn.e.png">
+<meta property="og:updated_time" content="2018-09-11T08:56:40.451Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RxJava的subscribeOn和observeOn区别与原理">
+<meta name="twitter:description" content="RxJava代码语义清晰，数据产生、变换、消费一目了然，极大的提高了代码的可读性、维护性，同时还提供了另外一个特性——线程切换">
+<meta name="twitter:image" content="http://reactivex.io/documentation/operators/images/subscribeOn.c.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://Jocoo0326.github.io/2017/07/17/2017-07-17-RxJava-subscribeOn-observeOn/"/>
+
+
+
+
+
+  <title>RxJava的subscribeOn和observeOn区别与原理 | Jocoo's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jocoo's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">All problems in computer science can be solved by another level of indirection.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://Jocoo0326.github.io/2017/07/17/2017-07-17-RxJava-subscribeOn-observeOn/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jocoo">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jocoo's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RxJava的subscribeOn和observeOn区别与原理</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-07-17T00:00:00+08:00">
+                2017-07-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/07/17/2017-07-17-RxJava-subscribeOn-observeOn/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2017/07/17/2017-07-17-RxJava-subscribeOn-observeOn/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>RxJava代码语义清晰，数据产生、变换、消费一目了然，极大的提高了代码的可读性、维护性，同时还提供了另外一个特性——线程切换<br><a id="more"></a><br>RxJava用于线程切换的主要有2个操作符：subscribeOn和observeOn</p>
+<h3 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h3><ul>
+<li>subscrieOn<br>指定Observable在特定的调度器上发射数据<br><img src="http://reactivex.io/documentation/operators/images/subscribeOn.c.png" alt=""></li>
+</ul>
+<ul>
+<li>observeOn<br>指定Observer在特定的调度器上接收Observable的数据<br><img src="http://reactivex.io/documentation/operators/images/observeOn.c.png" alt=""><br>observeOn在收到错误通知时会立即回调observer的onError方法，即使之前还有未消费的数据，onError会在它们之前被传递<br><img src="http://reactivex.io/documentation/operators/images/observeOn.e.png" alt=""></li>
+</ul>
+<h3 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h3><ul>
+<li>subscribeOn<br>Observable的subscribe方法将在操作符链条中第一个subscribeOn指定的调度器上执行，就算出现多个subscribeOn操作符也是如此</li>
+<li>observeOn<br>observeOn会将直接紧跟的后续操作符在其指定的调度器上执行<br>例如：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">Observable.create((ObservableOnSubscribe&lt;String&gt;) emitter -&gt; &#123;</span><br><span class="line">  System.out.println(Thread.currentThread());</span><br><span class="line">  String s = <span class="string">"from 1 created"</span>;</span><br><span class="line">  System.out.println(s);</span><br><span class="line">  emitter.onNext(s);</span><br><span class="line">  emitter.onComplete();</span><br><span class="line">&#125;)</span><br><span class="line">    .subscribeOn(Schedulers.computation())</span><br><span class="line">    .map(s -&gt; &#123;</span><br><span class="line">      System.out.println(Thread.currentThread());</span><br><span class="line">      System.out.println(s + <span class="string">" in map"</span>);</span><br><span class="line">      <span class="keyword">return</span> s;</span><br><span class="line">    &#125;)</span><br><span class="line">    .subscribeOn(Schedulers.io())</span><br><span class="line">    .observeOn(Schedulers.io())</span><br><span class="line">    .filter(s -&gt; &#123;</span><br><span class="line">      System.out.println(Thread.currentThread());</span><br><span class="line">      System.out.println(s + <span class="string">" in filter"</span>);</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;)</span><br><span class="line">    .subscribeOn(Schedulers.newThread())</span><br><span class="line">    .observeOn(Schedulers.computation())</span><br><span class="line">    .subscribe(s -&gt; &#123;</span><br><span class="line">      System.out.println(Thread.currentThread());</span><br><span class="line">      System.out.println(s + <span class="string">" in observer"</span>);</span><br><span class="line">    &#125;);</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  Thread.sleep(<span class="number">100</span>);</span><br><span class="line">&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">  e.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>结果：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Thread[RxComputationThreadPool-1,5,main]</span><br><span class="line">from 1 created</span><br><span class="line">Thread[RxComputationThreadPool-1,5,main]</span><br><span class="line">from 1 created in map</span><br><span class="line">Thread[RxCachedThreadScheduler-2,5,main]</span><br><span class="line">from 1 created in filter</span><br><span class="line">Thread[RxComputationThreadPool-2,5,main]</span><br><span class="line">from 1 created in observer</span><br></pre></td></tr></table></figure></p>
+<h3 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h3><p>首先看subscribeOn，只是将原Observable封装成ObservableSubscribeOn<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> Observable&lt;T&gt; <span class="title">subscribeOn</span><span class="params">(Scheduler scheduler)</span> </span>&#123;</span><br><span class="line">	ObjectHelper.requireNonNull(scheduler, <span class="string">"scheduler is null"</span>);</span><br><span class="line">	<span class="keyword">return</span> RxJavaPlugins.onAssembly(<span class="keyword">new</span> ObservableSubscribeOn&lt;T&gt;(<span class="keyword">this</span>, scheduler));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>那么在发生subscribe时会调用其subscribeActual方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ObservableSubscribeOn</span>&lt;<span class="title">T</span>&gt; <span class="keyword">extends</span> <span class="title">AbstractObservableWithUpstream</span>&lt;<span class="title">T</span>, <span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Scheduler scheduler;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ObservableSubscribeOn</span><span class="params">(ObservableSource&lt;T&gt; source, Scheduler scheduler)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(source);</span><br><span class="line">        <span class="keyword">this</span>.scheduler = scheduler;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">subscribeActual</span><span class="params">(<span class="keyword">final</span> Observer&lt;? <span class="keyword">super</span> T&gt; observer)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> SubscribeOnObserver&lt;T&gt; parent = <span class="keyword">new</span> SubscribeOnObserver&lt;T&gt;(observer);</span><br><span class="line"></span><br><span class="line">        observer.onSubscribe(parent);</span><br><span class="line"></span><br><span class="line">        parent.setDisposable(scheduler.scheduleDirect(<span class="keyword">new</span> SubscribeTask(parent)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">SubscribeOnObserver</span>&lt;<span class="title">T</span>&gt; <span class="keyword">extends</span> <span class="title">AtomicReference</span>&lt;<span class="title">Disposable</span>&gt; <span class="keyword">implements</span> <span class="title">Observer</span>&lt;<span class="title">T</span>&gt;, <span class="title">Disposable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">8094547886072529208L</span>;</span><br><span class="line">        <span class="keyword">final</span> Observer&lt;? <span class="keyword">super</span> T&gt; downstream;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> AtomicReference&lt;Disposable&gt; upstream;</span><br><span class="line"></span><br><span class="line">        SubscribeOnObserver(Observer&lt;? <span class="keyword">super</span> T&gt; downstream) &#123;</span><br><span class="line">            <span class="keyword">this</span>.downstream = downstream;</span><br><span class="line">            <span class="keyword">this</span>.upstream = <span class="keyword">new</span> AtomicReference&lt;Disposable&gt;();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSubscribe</span><span class="params">(Disposable d)</span> </span>&#123;</span><br><span class="line">            DisposableHelper.setOnce(<span class="keyword">this</span>.upstream, d);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onNext</span><span class="params">(T t)</span> </span>&#123;</span><br><span class="line">            downstream.onNext(t);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onError</span><span class="params">(Throwable t)</span> </span>&#123;</span><br><span class="line">            downstream.onError(t);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onComplete</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            downstream.onComplete();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">dispose</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            DisposableHelper.dispose(upstream);</span><br><span class="line">            DisposableHelper.dispose(<span class="keyword">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isDisposed</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> DisposableHelper.isDisposed(get());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">setDisposable</span><span class="params">(Disposable d)</span> </span>&#123;</span><br><span class="line">            DisposableHelper.setOnce(<span class="keyword">this</span>, d);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">SubscribeTask</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> SubscribeOnObserver&lt;T&gt; parent;</span><br><span class="line"></span><br><span class="line">        SubscribeTask(SubscribeOnObserver&lt;T&gt; parent) &#123;</span><br><span class="line">            <span class="keyword">this</span>.parent = parent;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            source.subscribe(parent);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在订阅时会将后续Observer封装成SubscribeOnObserver(parent字段)，并且将上游Observable(也就是source字段)订阅parent的操作封装成SubscribeTask(Runnable)，最后使用调度器scheduler安排Runnable的执行，也就是将上游Observable的订阅操作放到一个线程中执行，Observable将在那个线程产生数据并发射给Observer；</p>
+<p>如果出现多个subscribeOn的情形，将在第一个出现的subscibeOn所指定的调度器中执行，因为多个操作符拼接的过程本质是封装Observable的过程，自上而下，新调用的操作符会封装上一个Observable，产生新的Observable，直到最终调用subscribe(observer)方法，而调用subscribe方法的过程本质是封装Observer的过程，自下而上，依次调用前面封装的Observable的subscribeActual方法，其中会封装Observer，最终顶层的Observable看到的是一层一层封装的Observer，所以数据会流经各个Observer（外层Observer的onNext调用里层Observer的onNext），所以第一个subscribeOn封装的ObservableSubscribeOn的subscribeActual最后调用，最终订阅操作也就在其指定的调度器中执行，当然如果出现多个subscribeOn中夹杂observeOn，那就以这个observeOn为分割线；</p>
+<p>再看下observeOn，首先封装原Observable为ObservableObserveOn<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> Observable&lt;T&gt; <span class="title">observeOn</span><span class="params">(Scheduler scheduler, <span class="keyword">boolean</span> delayError, <span class="keyword">int</span> bufferSize)</span> </span>&#123;</span><br><span class="line">	ObjectHelper.requireNonNull(scheduler, <span class="string">"scheduler is null"</span>);</span><br><span class="line">	ObjectHelper.verifyPositive(bufferSize, <span class="string">"bufferSize"</span>);</span><br><span class="line">	<span class="keyword">return</span> RxJavaPlugins.onAssembly(<span class="keyword">new</span> ObservableObserveOn&lt;T&gt;(<span class="keyword">this</span>, scheduler, delayError, bufferSize));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在ObservableObserveOn中，会将Observer封装成ObserveOnObserver，目的是在收到上游数据后先缓存，并在新的线程中将数据转发给下游Observer，即下游Observer就在调度器指定的线程中接收到数据<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ObservableObserveOn</span>&lt;<span class="title">T</span>&gt; <span class="keyword">extends</span> <span class="title">AbstractObservableWithUpstream</span>&lt;<span class="title">T</span>, <span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Scheduler scheduler;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">boolean</span> delayError;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> bufferSize;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ObservableObserveOn</span><span class="params">(ObservableSource&lt;T&gt; source, Scheduler scheduler, <span class="keyword">boolean</span> delayError, <span class="keyword">int</span> bufferSize)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(source);</span><br><span class="line">        <span class="keyword">this</span>.scheduler = scheduler;</span><br><span class="line">        <span class="keyword">this</span>.delayError = delayError;</span><br><span class="line">        <span class="keyword">this</span>.bufferSize = bufferSize;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">subscribeActual</span><span class="params">(Observer&lt;? <span class="keyword">super</span> T&gt; observer)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (scheduler <span class="keyword">instanceof</span> TrampolineScheduler) &#123;</span><br><span class="line">            source.subscribe(observer);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            Scheduler.Worker w = scheduler.createWorker();</span><br><span class="line"></span><br><span class="line">            source.subscribe(<span class="keyword">new</span> ObserveOnObserver&lt;T&gt;(observer, w, delayError, bufferSize));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ObserveOnObserver</span>&lt;<span class="title">T</span>&gt; <span class="keyword">extends</span> <span class="title">BasicIntQueueDisposable</span>&lt;<span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">Observer</span>&lt;<span class="title">T</span>&gt;, <span class="title">Runnable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">6576896619930983584L</span>;</span><br><span class="line">        <span class="keyword">final</span> Observer&lt;? <span class="keyword">super</span> T&gt; downstream;</span><br><span class="line">        <span class="keyword">final</span> Scheduler.Worker worker;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">boolean</span> delayError;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> bufferSize;</span><br><span class="line"></span><br><span class="line">        SimpleQueue&lt;T&gt; queue;</span><br><span class="line"></span><br><span class="line">        Disposable upstream;</span><br><span class="line"></span><br><span class="line">        Throwable error;</span><br><span class="line">        <span class="keyword">volatile</span> <span class="keyword">boolean</span> done;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">volatile</span> <span class="keyword">boolean</span> disposed;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> sourceMode;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">boolean</span> outputFused;</span><br><span class="line"></span><br><span class="line">        ObserveOnObserver(Observer&lt;? <span class="keyword">super</span> T&gt; actual, Scheduler.Worker worker, <span class="keyword">boolean</span> delayError, <span class="keyword">int</span> bufferSize) &#123;</span><br><span class="line">            <span class="keyword">this</span>.downstream = actual;</span><br><span class="line">            <span class="keyword">this</span>.worker = worker;</span><br><span class="line">            <span class="keyword">this</span>.delayError = delayError;</span><br><span class="line">            <span class="keyword">this</span>.bufferSize = bufferSize;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSubscribe</span><span class="params">(Disposable d)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (DisposableHelper.validate(<span class="keyword">this</span>.upstream, d)) &#123;</span><br><span class="line">                <span class="keyword">this</span>.upstream = d;</span><br><span class="line">                <span class="keyword">if</span> (d <span class="keyword">instanceof</span> QueueDisposable) &#123;</span><br><span class="line">                    <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">                    QueueDisposable&lt;T&gt; qd = (QueueDisposable&lt;T&gt;) d;</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">int</span> m = qd.requestFusion(QueueDisposable.ANY | QueueDisposable.BOUNDARY);</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">if</span> (m == QueueDisposable.SYNC) &#123;</span><br><span class="line">                        sourceMode = m;</span><br><span class="line">                        queue = qd;</span><br><span class="line">                        done = <span class="keyword">true</span>;</span><br><span class="line">                        downstream.onSubscribe(<span class="keyword">this</span>);</span><br><span class="line">                        schedule();</span><br><span class="line">                        <span class="keyword">return</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span> (m == QueueDisposable.ASYNC) &#123;</span><br><span class="line">                        sourceMode = m;</span><br><span class="line">                        queue = qd;</span><br><span class="line">                        downstream.onSubscribe(<span class="keyword">this</span>);</span><br><span class="line">                        <span class="keyword">return</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                queue = <span class="keyword">new</span> SpscLinkedArrayQueue&lt;T&gt;(bufferSize);</span><br><span class="line"></span><br><span class="line">                downstream.onSubscribe(<span class="keyword">this</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onNext</span><span class="params">(T t)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (done) &#123;</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (sourceMode != QueueDisposable.ASYNC) &#123;</span><br><span class="line">                queue.offer(t);</span><br><span class="line">            &#125;</span><br><span class="line">            schedule();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onError</span><span class="params">(Throwable t)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (done) &#123;</span><br><span class="line">                RxJavaPlugins.onError(t);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            error = t;</span><br><span class="line">            done = <span class="keyword">true</span>;</span><br><span class="line">            schedule();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onComplete</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (done) &#123;</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            done = <span class="keyword">true</span>;</span><br><span class="line">            schedule();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">dispose</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (!disposed) &#123;</span><br><span class="line">                disposed = <span class="keyword">true</span>;</span><br><span class="line">                upstream.dispose();</span><br><span class="line">                worker.dispose();</span><br><span class="line">                <span class="keyword">if</span> (getAndIncrement() == <span class="number">0</span>) &#123;</span><br><span class="line">                    queue.clear();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isDisposed</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> disposed;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">schedule</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (getAndIncrement() == <span class="number">0</span>) &#123;</span><br><span class="line">                worker.schedule(<span class="keyword">this</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">drainNormal</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">int</span> missed = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">final</span> SimpleQueue&lt;T&gt; q = queue;</span><br><span class="line">            <span class="keyword">final</span> Observer&lt;? <span class="keyword">super</span> T&gt; a = downstream;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">                <span class="keyword">if</span> (checkTerminated(done, q.isEmpty(), a)) &#123;</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">                    <span class="keyword">boolean</span> d = done;</span><br><span class="line">                    T v;</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        v = q.poll();</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">                        Exceptions.throwIfFatal(ex);</span><br><span class="line">                        disposed = <span class="keyword">true</span>;</span><br><span class="line">                        upstream.dispose();</span><br><span class="line">                        q.clear();</span><br><span class="line">                        a.onError(ex);</span><br><span class="line">                        worker.dispose();</span><br><span class="line">                        <span class="keyword">return</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">boolean</span> empty = v == <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">if</span> (checkTerminated(d, empty, a)) &#123;</span><br><span class="line">                        <span class="keyword">return</span>;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">if</span> (empty) &#123;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    a.onNext(v);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                missed = addAndGet(-missed);</span><br><span class="line">                <span class="keyword">if</span> (missed == <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">drainFused</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">int</span> missed = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">                <span class="keyword">if</span> (disposed) &#123;</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">boolean</span> d = done;</span><br><span class="line">                Throwable ex = error;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (!delayError &amp;&amp; d &amp;&amp; ex != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    disposed = <span class="keyword">true</span>;</span><br><span class="line">                    downstream.onError(error);</span><br><span class="line">                    worker.dispose();</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                downstream.onNext(<span class="keyword">null</span>);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (d) &#123;</span><br><span class="line">                    disposed = <span class="keyword">true</span>;</span><br><span class="line">                    ex = error;</span><br><span class="line">                    <span class="keyword">if</span> (ex != <span class="keyword">null</span>) &#123;</span><br><span class="line">                        downstream.onError(ex);</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        downstream.onComplete();</span><br><span class="line">                    &#125;</span><br><span class="line">                    worker.dispose();</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                missed = addAndGet(-missed);</span><br><span class="line">                <span class="keyword">if</span> (missed == <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (outputFused) &#123;</span><br><span class="line">                drainFused();</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                drainNormal();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">boolean</span> <span class="title">checkTerminated</span><span class="params">(<span class="keyword">boolean</span> d, <span class="keyword">boolean</span> empty, Observer&lt;? <span class="keyword">super</span> T&gt; a)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (disposed) &#123;</span><br><span class="line">                queue.clear();</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (d) &#123;</span><br><span class="line">                Throwable e = error;</span><br><span class="line">                <span class="keyword">if</span> (delayError) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (empty) &#123;</span><br><span class="line">                        disposed = <span class="keyword">true</span>;</span><br><span class="line">                        <span class="keyword">if</span> (e != <span class="keyword">null</span>) &#123;</span><br><span class="line">                            a.onError(e);</span><br><span class="line">                        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                            a.onComplete();</span><br><span class="line">                        &#125;</span><br><span class="line">                        worker.dispose();</span><br><span class="line">                        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">if</span> (e != <span class="keyword">null</span>) &#123;</span><br><span class="line">                        disposed = <span class="keyword">true</span>;</span><br><span class="line">                        queue.clear();</span><br><span class="line">                        a.onError(e);</span><br><span class="line">                        worker.dispose();</span><br><span class="line">                        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">                    &#125; <span class="keyword">else</span></span><br><span class="line">                    <span class="keyword">if</span> (empty) &#123;</span><br><span class="line">                        disposed = <span class="keyword">true</span>;</span><br><span class="line">                        a.onComplete();</span><br><span class="line">                        worker.dispose();</span><br><span class="line">                        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">requestFusion</span><span class="params">(<span class="keyword">int</span> mode)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> ((mode &amp; ASYNC) != <span class="number">0</span>) &#123;</span><br><span class="line">                outputFused = <span class="keyword">true</span>;</span><br><span class="line">                <span class="keyword">return</span> ASYNC;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> NONE;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Nullable</span></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> T <span class="title">poll</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> queue.poll();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            queue.clear();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> queue.isEmpty();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>所以Observable最本质的调用过程就是top-level Observable将数据发射给各个操作符创建的Observer，直至bottom-level Observer；</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/RxJava/" rel="tag"># RxJava</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/20/2017-06-20-smooth-bezier-spline-through-points/" rel="next" title="关于过n个点画出平滑曲线的数学原理">
+                <i class="fa fa-chevron-left"></i> 关于过n个点画出平滑曲线的数学原理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/09/2017-08-09-Garbage-Collection/" rel="prev" title="Java Garbage Collection">
+                Java Garbage Collection <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Jocoo" />
+            
+              <p class="site-author-name" itemprop="name">Jocoo</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#区别"><span class="nav-number">1.</span> <span class="nav-text">区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#特性"><span class="nav-number">2.</span> <span class="nav-text">特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#源码分析"><span class="nav-number">3.</span> <span class="nav-text">源码分析</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jocoo</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

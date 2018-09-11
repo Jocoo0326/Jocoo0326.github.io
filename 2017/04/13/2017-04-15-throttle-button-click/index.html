@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-corner-indicator.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="RxJava," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="项目中很多场景需要防止重复点击，比如提交订单等与支付相关的操作时，要避免重复点击重复提交表单，使用RxJava可以优雅的实现">
+<meta name="keywords" content="RxJava">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用RxJava防止button快速点击">
+<meta property="og:url" content="http://Jocoo0326.github.io/2017/04/13/2017-04-15-throttle-button-click/index.html">
+<meta property="og:site_name" content="Jocoo&#39;s blog">
+<meta property="og:description" content="项目中很多场景需要防止重复点击，比如提交订单等与支付相关的操作时，要避免重复点击重复提交表单，使用RxJava可以优雅的实现">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/throttleFirst.png">
+<meta property="og:updated_time" content="2018-09-11T08:56:16.562Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用RxJava防止button快速点击">
+<meta name="twitter:description" content="项目中很多场景需要防止重复点击，比如提交订单等与支付相关的操作时，要避免重复点击重复提交表单，使用RxJava可以优雅的实现">
+<meta name="twitter:image" content="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/throttleFirst.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://Jocoo0326.github.io/2017/04/13/2017-04-15-throttle-button-click/"/>
+
+
+
+
+
+  <title>使用RxJava防止button快速点击 | Jocoo's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jocoo's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">All problems in computer science can be solved by another level of indirection.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://Jocoo0326.github.io/2017/04/13/2017-04-15-throttle-button-click/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jocoo">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jocoo's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">使用RxJava防止button快速点击</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-04-13T00:00:00+08:00">
+                2017-04-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/04/13/2017-04-15-throttle-button-click/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2017/04/13/2017-04-15-throttle-button-click/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>项目中很多场景需要防止重复点击，比如提交订单等与支付相关的操作时，要避免重复点击重复提交表单，使用RxJava可以优雅的实现<br><a id="more"></a></p>
+<h3 id="传统实现方式"><a href="#传统实现方式" class="headerlink" title="传统实现方式"></a>传统实现方式</h3><p>以往我们有很多实现方式，比较多的是使用系统时间比较的方式，如下代码<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">OnMultiClickListener</span> <span class="keyword">implements</span> <span class="title">View</span>.<span class="title">OnClickListener</span></span>&#123;</span><br><span class="line">    <span class="comment">// 两次点击按钮之间的点击间隔不能少于1000毫秒</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MIN_CLICK_DELAY_TIME = <span class="number">1000</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">long</span> lastClickTime;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">onMultiClick</span><span class="params">(View v)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">long</span> curClickTime = System.currentTimeMillis();</span><br><span class="line">        <span class="keyword">if</span>((curClickTime - lastClickTime) &gt;= MIN_CLICK_DELAY_TIME) &#123;</span><br><span class="line">            <span class="comment">// 超过点击间隔后再将lastClickTime重置为当前点击时间</span></span><br><span class="line">            lastClickTime = curClickTime;</span><br><span class="line">            onMultiClick(v);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="使用RxJava"><a href="#使用RxJava" class="headerlink" title="使用RxJava"></a>使用RxJava</h3><p>我们使用throttleFirst操作符可以实现，代码<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Disposable d = RxView.clicks(tv).throttleFirst(<span class="number">1</span>, TimeUnit.SECONDS).subscribe(<span class="keyword">new</span> Consumer&lt;Object&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(Object o)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="comment">// do something</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<h3 id="throttleFirst作用"><a href="#throttleFirst作用" class="headerlink" title="throttleFirst作用"></a>throttleFirst作用</h3><p>发射原Observable的数据，并启动一个时间窗口，在这个时间窗口内的其他数据将被忽略<br><img src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/throttleFirst.png" alt=""><br>使用和作用很好懂，我们看下实现加深理解</p>
+<h3 id="throttleFirst源码分析"><a href="#throttleFirst源码分析" class="headerlink" title="throttleFirst源码分析"></a>throttleFirst源码分析</h3><p>首先throttleFirst将原Observable分装成ObservableThrottleFirstTimed对象<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> Observable&lt;T&gt; <span class="title">throttleFirst</span><span class="params">(<span class="keyword">long</span> windowDuration, TimeUnit unit)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> throttleFirst(windowDuration, unit, Schedulers.computation());</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> Observable&lt;T&gt; <span class="title">throttleFirst</span><span class="params">(<span class="keyword">long</span> skipDuration, TimeUnit unit, Scheduler scheduler)</span> </span>&#123;</span><br><span class="line">    ObjectHelper.requireNonNull(unit, <span class="string">"unit is null"</span>);</span><br><span class="line">    ObjectHelper.requireNonNull(scheduler, <span class="string">"scheduler is null"</span>);</span><br><span class="line">    <span class="keyword">return</span> RxJavaPlugins.onAssembly(<span class="keyword">new</span> ObservableThrottleFirstTimed&lt;T&gt;(<span class="keyword">this</span>, skipDuration, unit, scheduler));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>当Observable发生订阅时会调用ObservableThrottleFirstTimed的subscribeActual, 其中只不过是封装了Observer为DebounceTimedObserver<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ObservableThrottleFirstTimed</span>&lt;<span class="title">T</span>&gt; <span class="keyword">extends</span> <span class="title">AbstractObservableWithUpstream</span>&lt;<span class="title">T</span>, <span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">long</span> timeout;</span><br><span class="line">    <span class="keyword">final</span> TimeUnit unit;</span><br><span class="line">    <span class="keyword">final</span> Scheduler scheduler;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ObservableThrottleFirstTimed</span><span class="params">(ObservableSource&lt;T&gt; source,</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">long</span> timeout, TimeUnit unit, Scheduler scheduler)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(source);</span><br><span class="line">        <span class="keyword">this</span>.timeout = timeout;</span><br><span class="line">        <span class="keyword">this</span>.unit = unit;</span><br><span class="line">        <span class="keyword">this</span>.scheduler = scheduler;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">subscribeActual</span><span class="params">(Observer&lt;? <span class="keyword">super</span> T&gt; t)</span> </span>&#123;</span><br><span class="line">        source.subscribe(<span class="keyword">new</span> DebounceTimedObserver&lt;T&gt;(</span><br><span class="line">                <span class="keyword">new</span> SerializedObserver&lt;T&gt;(t),</span><br><span class="line">                timeout, unit, scheduler.createWorker()));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">DebounceTimedObserver</span>&lt;<span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">extends</span> <span class="title">AtomicReference</span>&lt;<span class="title">Disposable</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">Observer</span>&lt;<span class="title">T</span>&gt;, <span class="title">Disposable</span>, <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">786994795061867455L</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> Observer&lt;? <span class="keyword">super</span> T&gt; actual;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">long</span> timeout;</span><br><span class="line">        <span class="keyword">final</span> TimeUnit unit;</span><br><span class="line">        <span class="keyword">final</span> Scheduler.Worker worker;</span><br><span class="line"></span><br><span class="line">        Disposable s;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">volatile</span> <span class="keyword">boolean</span> gate;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">boolean</span> done;</span><br><span class="line"></span><br><span class="line">        DebounceTimedObserver(Observer&lt;? <span class="keyword">super</span> T&gt; actual, <span class="keyword">long</span> timeout, TimeUnit unit, Worker worker) &#123;</span><br><span class="line">            <span class="keyword">this</span>.actual = actual;</span><br><span class="line">            <span class="keyword">this</span>.timeout = timeout;</span><br><span class="line">            <span class="keyword">this</span>.unit = unit;</span><br><span class="line">            <span class="keyword">this</span>.worker = worker;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSubscribe</span><span class="params">(Disposable s)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (DisposableHelper.validate(<span class="keyword">this</span>.s, s)) &#123;</span><br><span class="line">                <span class="keyword">this</span>.s = s;</span><br><span class="line">                actual.onSubscribe(<span class="keyword">this</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onNext</span><span class="params">(T t)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (!gate &amp;&amp; !done) &#123;</span><br><span class="line">                gate = <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">                actual.onNext(t);</span><br><span class="line"></span><br><span class="line">                Disposable d = get();</span><br><span class="line">                <span class="keyword">if</span> (d != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    d.dispose();</span><br><span class="line">                &#125;</span><br><span class="line">                DisposableHelper.replace(<span class="keyword">this</span>, worker.schedule(<span class="keyword">this</span>, timeout, unit));</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            gate = <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onError</span><span class="params">(Throwable t)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (done) &#123;</span><br><span class="line">                RxJavaPlugins.onError(t);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                done = <span class="keyword">true</span>;</span><br><span class="line">                DisposableHelper.dispose(<span class="keyword">this</span>);</span><br><span class="line">                actual.onError(t);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onComplete</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (!done) &#123;</span><br><span class="line">                done = <span class="keyword">true</span>;</span><br><span class="line">                DisposableHelper.dispose(<span class="keyword">this</span>);</span><br><span class="line">                worker.dispose();</span><br><span class="line">                actual.onComplete();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">dispose</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            DisposableHelper.dispose(<span class="keyword">this</span>);</span><br><span class="line">            worker.dispose();</span><br><span class="line">            s.dispose();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isDisposed</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> DisposableHelper.isDisposed(get());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>当上游Observable给DebounceTimedObserver发射数据时，onNext方法会回调<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onNext</span><span class="params">(T t)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (!gate &amp;&amp; !done) &#123;</span><br><span class="line">		gate = <span class="keyword">true</span>;</span><br><span class="line">		actual.onNext(t);</span><br><span class="line">		Disposable d = get();</span><br><span class="line">		<span class="keyword">if</span> (d != <span class="keyword">null</span>) &#123;</span><br><span class="line">			d.dispose();</span><br><span class="line">		&#125;</span><br><span class="line">		DisposableHelper.replace(<span class="keyword">this</span>, worker.schedule(<span class="keyword">this</span>, timeout, unit));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>只是在给下游Observer发射数据之后设置开关gate=true，同时启动一个延迟任务, 延迟任务中会将开关关闭gate=false<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	gate = <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>就这么简单。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/RxJava/" rel="tag"># RxJava</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/13/2017-04-13-show-cache-before-network-if-has/" rel="next" title="使用RxJava协同加载本地缓存与网络数据">
+                <i class="fa fa-chevron-left"></i> 使用RxJava协同加载本地缓存与网络数据
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/06/2017-06-06-ThreadPoolExecutor/" rel="prev" title="Deep into ThreadPoolExecutor">
+                Deep into ThreadPoolExecutor <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Jocoo" />
+            
+              <p class="site-author-name" itemprop="name">Jocoo</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#传统实现方式"><span class="nav-number">1.</span> <span class="nav-text">传统实现方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用RxJava"><span class="nav-number">2.</span> <span class="nav-text">使用RxJava</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#throttleFirst作用"><span class="nav-number">3.</span> <span class="nav-text">throttleFirst作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#throttleFirst源码分析"><span class="nav-number">4.</span> <span class="nav-text">throttleFirst源码分析</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jocoo</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

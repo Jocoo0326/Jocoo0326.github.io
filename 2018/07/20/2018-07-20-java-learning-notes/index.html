@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-corner-indicator.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java basic," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Java基础知识总结-2:">
+<meta name="keywords" content="Java basic">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java learning notes - 2">
+<meta property="og:url" content="http://Jocoo0326.github.io/2018/07/20/2018-07-20-java-learning-notes/index.html">
+<meta property="og:site_name" content="Jocoo&#39;s blog">
+<meta property="og:description" content="Java基础知识总结-2:">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-09-11T08:57:03.728Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java learning notes - 2">
+<meta name="twitter:description" content="Java基础知识总结-2:">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://Jocoo0326.github.io/2018/07/20/2018-07-20-java-learning-notes/"/>
+
+
+
+
+
+  <title>Java learning notes - 2 | Jocoo's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jocoo's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">All problems in computer science can be solved by another level of indirection.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://Jocoo0326.github.io/2018/07/20/2018-07-20-java-learning-notes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jocoo">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jocoo's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java learning notes - 2</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-07-20T00:00:00+08:00">
+                2018-07-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/07/20/2018-07-20-java-learning-notes/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2018/07/20/2018-07-20-java-learning-notes/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Java基础知识总结-2:<br><a id="more"></a></p>
+<h2 id="HashTable、HashMap、TreeMap、LinkedHashMap有何区别"><a href="#HashTable、HashMap、TreeMap、LinkedHashMap有何区别" class="headerlink" title="HashTable、HashMap、TreeMap、LinkedHashMap有何区别"></a>HashTable、HashMap、TreeMap、LinkedHashMap有何区别</h2><ol>
+<li>HashTable是早期Java提供的哈希表实现，本身同步，不支持null键和值，initialCapacity=11，loadFactor=0.75，rehash之后newCapacity=(oldCapacity &lt;&lt; 1) + 1，HashMap扩容后为原来2倍</li>
+<li>HashMap是应用更为广泛的哈希表实现，行为大致和HashTable一致，主要区别在于HashMap非同步，支持null键和值，通常情况下，HashMap进行put和get可以达到常数时间的性能，所以它是绝大部分利用键值对存储场景的首选</li>
+<li>HashMap的initialCapacity=16，loadFactor=0.75</li>
+<li>TreeMap则是基于红黑树的一种提供顺序访问的Map，和HashMap不同，它的get、put、remove之类的操作都是O(logn)的时间复杂度，具体顺序可以由指定的Comparator来决定，或者根据键的自然顺序来判断</li>
+<li>HashMap并发环境可能出现无限循环(桶内的链表变成了环形链表导致, resize并发导致)</li>
+<li>HashMap的性能表现非常依赖于哈希码的有效性，所以hashCode和equals的一些基本约定：</li>
+</ol>
+<ul>
+<li>equals相等，hashCode一定要相等</li>
+<li>重写了hashCode也要重写equals</li>
+<li>hashCode需要保持一致性，状态改变返回的哈希值仍然要一致</li>
+<li>equals的对称、反射、传递等特性</li>
+</ul>
+<ol start="7">
+<li><p>HashMap的hash(Object key):</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> h;</span><br><span class="line"><span class="keyword">return</span> (key == <span class="keyword">null</span>) ? <span class="number">0</span> : (h = key.hashCode()) ^ (h &gt;&gt;&gt; <span class="number">16</span>); <span class="comment">// 将高位数据与低位数据合并，可以有效减少碰撞</span></span><br><span class="line">index = (tab.length - ) &amp; hash;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>ConcurrentHashMap基于lock实现锁分段技术，首先将数据分段，为每个段分配一把锁，当一个线程占用锁访问其中一段数据时，其他段的数据也能被其他线程访问，ConcurrentHashmap不仅保证了多线程环境下的数据访问安全性，性能上也有长足的提升</p>
+</li>
+<li>LinkedHashMap基于HashMap实现，提供了插入顺序和访问顺序功能，通过accessOrder设置，通过双链表自身维护了访问的顺序，提供原生LRUCache功能实现</li>
+<li>TODO 红黑树</li>
+</ol>
+<h2 id="如何保证集合是线程安全的-ConcurrentHashMap如何实现高效的线程安全"><a href="#如何保证集合是线程安全的-ConcurrentHashMap如何实现高效的线程安全" class="headerlink" title="如何保证集合是线程安全的?ConcurrentHashMap如何实现高效的线程安全?"></a>如何保证集合是线程安全的?ConcurrentHashMap如何实现高效的线程安全?</h2><ol>
+<li>Java提供了不同层面的线程安全支持。传统集合框架内部，除了HashTable等同步容器，还提供了同步包装器(Synchronized Wrapper)，我们可以调用Collections工具类提供的包装方法，获取一个同步容器(i.e: Collections.synchronizedMap etc)，但非常粗粒度的方式(利用自身作mutex)，性能低下</li>
+<li>并发包提供的线程安全容器类</li>
+</ol>
+<ul>
+<li>各种并发容器，ConcurrentHashMap、CopyOnWriteArrayList</li>
+<li>各种线程安全队列(Queue/Deque)，ArrayBlockingQueue、SynchronousQueue</li>
+<li>各种有序容器的线程安全版本</li>
+</ul>
+<ol start="3">
+<li>利用Unsafe的CAS(Compare and swap，CPU原子指令)实现无锁并发机制(free-lock)，线程更新时判断内存值是否与期望值一致，若是说明没有其他线程修改过，则更新新值，否则返回失败，重试进行，直至成功，最重要的是CAS是CPU原子指令，CAS操作通常配合while无限循环</li>
+</ol>
+<h2 id="Java提供了哪些io方式-NIO如何实现多路复用"><a href="#Java提供了哪些io方式-NIO如何实现多路复用" class="headerlink" title="Java提供了哪些io方式?NIO如何实现多路复用?"></a>Java提供了哪些io方式?NIO如何实现多路复用?</h2><ol>
+<li>传统java.io基于流模型实现，提供输入输出流，读取写入字节或字符流，属于同步阻塞io，缺点是io效率和扩展性存在局限性</li>
+<li>Java1.4引入NIO框架，提供了Channel、Selector、Buffer等新的抽象，可以构建多路复用、同步非阻塞IO程序，同时提供了更接近操作系统底层的高性能数据操作方式</li>
+<li>Java7中，NIO进一步改进，也就是NIO2，引入了异步非阻塞IO，基于事件和回调机制</li>
+<li>select模式是使用一个线程做监听，而bio每次来一个链接都要做线程切换，所以节省的时间在线程切换上</li>
+<li>Selector管理channel，channel关心一种事件，当channel接受到某事件时，selector.select()方法会被通知，进而处理IO操作</li>
+<li>Linux上依赖epoll机制，windows依赖iocp</li>
+</ol>
+<h2 id="ThreadPoolExecutor的理解"><a href="#ThreadPoolExecutor的理解" class="headerlink" title="ThreadPoolExecutor的理解"></a>ThreadPoolExecutor的理解</h2><ol>
+<li>参数意义:</li>
+</ol>
+<ul>
+<li>corePoolSize: 核心Worker线程的数量，可以理解为长期驻留的线程数目（除非设置了allowCoreThreadTimeOut）</li>
+<li>maximumPoolSize: 线程池最大Worker线程的数量，就是线程不够时能够创建最大线程数</li>
+<li>keepAliveTime: Worker线程结束之前的空闲时间</li>
+<li>unit: 时间的单位</li>
+<li>workQueue: 存放Runnable的阻塞队列</li>
+<li>threadFactory: 创建线程的工厂</li>
+<li>handler: 不能接受Runnable时的拒绝策略</li>
+</ul>
+<ol start="2">
+<li>执行规则:</li>
+</ol>
+<ul>
+<li>若currentThreadCount &lt; corePoolSize 创建core线程，core线程会立即执行；</li>
+<li>若currentThreadCount &gt;= corePoolSize 放入阻塞队列；</li>
+<li>队列已满后，若currentThreadCount &lt; maximumPoolSize 创建新的线程。</li>
+</ul>
+<ol start="3">
+<li>为什么能够复用线程?以及空闲超时的原理?<br>提交任务Runnable后，线程池会创建一个Worker线程，线程中while循环执行任务，线程执行完当前任务后，会从等待队列里获取一个任务并执行，如此就避免了重复创建线程，实际是一个线程执行多个runnable， 线程的超时由队列的超时操作实现。</li>
+<li>Thread和Runnable的理解<br>Runnable通常代表具体的业务逻辑，Thread代表操作系统线程的调度管理，早起java线程api将业务逻辑和线程创建调度管理混在一起，极为不便，就像HTTP请求还要处理TCP握手一样，很多框架的存在的意义也在于此，例如OKHTTP，用户用接口定义请求，然后执行，透明化HTTPS的细节</li>
+<li>Executors常用线程池配置</li>
+</ol>
+<ul>
+<li>newCachedThreadPool(), 通常用来处理大量短时间的工作任务，特点：试图缓存线程并重用，当无线程可用时，创建新的线程执行任务；线程闲置60S后，自动移出线程池，长时间闲置不会消耗资源，corePoolSize为0，SynchronousQueue作为工作队列;</li>
+<li>newFixedThreadPool(int nThreads), 重用指定数目(nThreads)的线程，使用LinkedBlockingQueue作为工作队列，任何时候最多只有nThreads个线程是活动的，任务超过nThreads后，任务会在工作队列中等待空闲线程，如果有工作线程退出，将会有新的线程被创建，以补足nThreads数目；</li>
+<li>newSingleThreadExecutor(), 它创建的是ScheduledExecutorService，支持定时或周期性的工作调度，工作线程数目限制为1，所以任务都是被顺序执行，最多只会有一个任务处于活动状态，并且不允许改变线程池实例，避免改变线程数目；</li>
+<li>newScheduledThreadPool(int corePoolSize), 同样是ScheduledExecutorService, 区别是会保持corePoolSize个工作线程;</li>
+</ul>
+<ol start="6">
+<li>线程池大小选择策略</li>
+</ol>
+<ul>
+<li>如果我们的任务主要是计算，那么意味着CPU的处理能力是稀缺资源，我们不能够通过增大线程数提高计算能力，因为线程越多，上下文切换的开销也越大，通常建议按照CPU核的数目N或N+1；</li>
+<li>如果是等待较多的任务，如I/O操作比较多，可以参考Brain Goetz推荐的计算方法：线程数 = CPU核数 x (1 + 平均等待时间/平均工作时间);</li>
+<li>实际可能受到各种系统资源限制影响，需要结合其他资源的使用，合理调整线程数量;</li>
+</ul>
+<h2 id="Synchronized和ReentrantLock有什么区别？"><a href="#Synchronized和ReentrantLock有什么区别？" class="headerlink" title="Synchronized和ReentrantLock有什么区别？"></a>Synchronized和ReentrantLock有什么区别？</h2><ol>
+<li>Synchronized是Java内建同步机制，提供了互斥的语义和可见性(volatile)，一个线程获取锁，其他试图获取锁的线程只能等待或阻塞</li>
+<li>ReentrantLock是再入锁，语义和Synchronized基本相同，通过调用lock方法获取锁，书写灵活，一般配合try-catch-finally，并在finally中调用unlock释放锁，当线程已获取了锁，lock方法会立即返回</li>
+<li>Reentrantlock提供更细粒度的同步操作，可以提供公平性(等待时间长的线程优先获取锁)，定义条件</li>
+<li>通过lock.isHeldByCurrentThread可以判断当前线程是否拥有这个锁</li>
+</ol>
+<h2 id="Java并发包工具类"><a href="#Java并发包工具类" class="headerlink" title="Java并发包工具类"></a>Java并发包工具类</h2><ol>
+<li>主要特点</li>
+</ol>
+<ul>
+<li>提供了比synchronized更加高级的同步结构，包括CountDownLatch、CyclicBarrier、Semaphore，可以在更多实际场景下使用；</li>
+<li>并发容器类，如ConcurrentHashMap、CopyOnWriteArrayList</li>
+<li>并发队列实现类，如ArrayBlockingQueue, LinkedListBlockingQueue, PriorityBlockingQueue, SynchronousQueue</li>
+<li>强大的Executor框架，可以创建各种不同类型的线程池，调度任务运行等</li>
+</ul>
+<ol start="2">
+<li>目的：</li>
+</ol>
+<ul>
+<li>完成业务逻辑</li>
+<li>提高吞吐量</li>
+</ul>
+<ol start="3">
+<li>Semaphore</li>
+</ol>
+<ul>
+<li>一种计数器，可以控制一定数量的permit，以限制通用资源的访问</li>
+<li>acquire/release基本操作, acquire获取permit则执行，否则阻塞, release释放permit</li>
+</ul>
+<ol start="4">
+<li>CountDownLatch和CyclicBarrier</li>
+</ol>
+<ul>
+<li>CountDownLatch不可以重置，无法重用，CyclicBarrier可以重用</li>
+<li>CountDownLatch基本操作是countDown/await, await会阻塞等待countDown达到足够的次数，不管在哪个线程countDown, CountDownLatch通常用于线程间等待操作</li>
+<li>CyclicBarrier可以指定多个线程达到公共障碍点(common barrier point)前互相等待，然后一起执行，barrier重置</li>
+</ul>
+<h2 id="ThreadLocal的理解"><a href="#ThreadLocal的理解" class="headerlink" title="ThreadLocal的理解"></a>ThreadLocal的理解</h2><ol>
+<li>线程局部存储，提供一个线程独立的局部变量存储机制；</li>
+<li>通过Thread类中ThreadLocal.ThreadLocalMap threadLocals变量实现，每个线程独有此变量，这是一个类似于HashMap的结构，内部用Entry[]存储数据，<br> 每个Entry是一个WeakReference&lt;ThreadLocal&lt;?&gt;&gt;扩展类，ThreadLocal作为key，欲存储的变量作为value，通过ThreadLocal.get()/set()方法操作当前线程关联的<br> map结构中对应的Entry数据键值对；</li>
+<li>一个ThreadLocal对应一个线程局部变量，若多个线程均需此局部变量，则ThreadLocal会被多个线程引用</li>
+</ol>
+<h2 id="CAS和AQS"><a href="#CAS和AQS" class="headerlink" title="CAS和AQS"></a>CAS和AQS</h2><ol>
+<li>CAS –CompareAndSwap, Unsafe提供的内部操作，基于CPU特定指令，属轻量级操作指令，实现free-lock机制的基础;</li>
+<li>AQS –AbstractQueuedSynchronizer, 基于FIFO队列实现的同步器，ReentrantLock, CountDownLatch, ThreadPoolExecutor$Worker等都是基于AQS实现;</li>
+<li>Free-lock高并发的基础-CAS，AQS是JAVA提供的封装CAS的实现;</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java-basic/" rel="tag"># Java basic</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/15/2018-07-15-java-learning-notes/" rel="next" title="Java learning notes - 1">
+                <i class="fa fa-chevron-left"></i> Java learning notes - 1
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/26/2018-07-26-java-learning-notes/" rel="prev" title="Java learning notes - 3">
+                Java learning notes - 3 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Jocoo" />
+            
+              <p class="site-author-name" itemprop="name">Jocoo</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#HashTable、HashMap、TreeMap、LinkedHashMap有何区别"><span class="nav-number">1.</span> <span class="nav-text">HashTable、HashMap、TreeMap、LinkedHashMap有何区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何保证集合是线程安全的-ConcurrentHashMap如何实现高效的线程安全"><span class="nav-number">2.</span> <span class="nav-text">如何保证集合是线程安全的?ConcurrentHashMap如何实现高效的线程安全?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java提供了哪些io方式-NIO如何实现多路复用"><span class="nav-number">3.</span> <span class="nav-text">Java提供了哪些io方式?NIO如何实现多路复用?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ThreadPoolExecutor的理解"><span class="nav-number">4.</span> <span class="nav-text">ThreadPoolExecutor的理解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Synchronized和ReentrantLock有什么区别？"><span class="nav-number">5.</span> <span class="nav-text">Synchronized和ReentrantLock有什么区别？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java并发包工具类"><span class="nav-number">6.</span> <span class="nav-text">Java并发包工具类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ThreadLocal的理解"><span class="nav-number">7.</span> <span class="nav-text">ThreadLocal的理解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CAS和AQS"><span class="nav-number">8.</span> <span class="nav-text">CAS和AQS</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jocoo</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
