@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="emacs," />
+  <meta name="keywords" content="synchronized," />
 
 
 
@@ -86,18 +86,21 @@
 
 
 
-<meta name="description" content="emacs官网下载的Windows版本缺少很多功能，比如不能显示jpeg、png等图片，于是打算自己编译emacs">
-<meta name="keywords" content="emacs">
+<meta name="description" content="synchronized提供了Java中同步原语的实现">
+<meta name="keywords" content="synchronized">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Building emacs with msys2">
-<meta property="og:url" content="http://Jocoo0326.github.io/2016/09/06/2016-09-06-building-emacs-w64-with-msys2/index.html">
+<meta property="og:title" content="Java中synchronized关键字的实现原理">
+<meta property="og:url" content="http://Jocoo0326.github.io/2017/03/26/2017-03-26-java-synchronized-keyword/index.html">
 <meta property="og:site_name" content="Jocoo&#39;s blog">
-<meta property="og:description" content="emacs官网下载的Windows版本缺少很多功能，比如不能显示jpeg、png等图片，于是打算自己编译emacs">
+<meta property="og:description" content="synchronized提供了Java中同步原语的实现">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-09-11T08:55:46.702Z">
+<meta property="og:image" content="http://jocoo0326.github.io/img/2017-03-26-Java-object-memory-structure-01.png">
+<meta property="og:image" content="http://jocoo0326.github.io/img/2017-03-26-Java-object-memory-structure-02.png">
+<meta property="og:updated_time" content="2018-09-12T07:48:48.199Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Building emacs with msys2">
-<meta name="twitter:description" content="emacs官网下载的Windows版本缺少很多功能，比如不能显示jpeg、png等图片，于是打算自己编译emacs">
+<meta name="twitter:title" content="Java中synchronized关键字的实现原理">
+<meta name="twitter:description" content="synchronized提供了Java中同步原语的实现">
+<meta name="twitter:image" content="http://jocoo0326.github.io/img/2017-03-26-Java-object-memory-structure-01.png">
 
 
 
@@ -127,13 +130,13 @@
 
 
 
-  <link rel="canonical" href="http://Jocoo0326.github.io/2016/09/06/2016-09-06-building-emacs-w64-with-msys2/"/>
+  <link rel="canonical" href="http://Jocoo0326.github.io/2017/03/26/2017-03-26-java-synchronized-keyword/"/>
 
 
 
 
 
-  <title>Building emacs with msys2 | Jocoo's blog</title>
+  <title>Java中synchronized关键字的实现原理 | Jocoo's blog</title>
   
 
 
@@ -260,7 +263,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://Jocoo0326.github.io/2016/09/06/2016-09-06-building-emacs-w64-with-msys2/">
+    <link itemprop="mainEntityOfPage" href="http://Jocoo0326.github.io/2017/03/26/2017-03-26-java-synchronized-keyword/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Jocoo">
@@ -277,7 +280,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Building emacs with msys2</h1>
+          <h1 class="post-title" itemprop="name headline">Java中synchronized关键字的实现原理</h1>
         
 
         <div class="post-meta">
@@ -289,8 +292,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-09-06T00:00:00+08:00">
-                2016-09-06
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-03-26T00:00:00+08:00">
+                2017-03-26
               </time>
             
 
@@ -312,8 +315,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tools/" itemprop="url" rel="index">
-                    <span itemprop="name">tools</span>
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
                   </a>
                 </span>
 
@@ -330,8 +333,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2016/09/06/2016-09-06-building-emacs-w64-with-msys2/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count gitment-comments-count" data-xid="/2016/09/06/2016-09-06-building-emacs-w64-with-msys2/" itemprop="commentsCount"></span>
+                <a href="/2017/03/26/2017-03-26-java-synchronized-keyword/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2017/03/26/2017-03-26-java-synchronized-keyword/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -359,23 +362,23 @@
       
 
       
-        <p>emacs官网下载的Windows版本缺少很多功能，比如不能显示jpeg、png等图片，于是打算自己编译emacs<br><a id="more"></a></p>
-<h2 id="msys2"><a href="#msys2" class="headerlink" title="msys2"></a>msys2</h2><p>msys2在msys基础上整合了Cygwin(posix抽象层)和mingw-w64，既提供了windows上unix环境，又提供了使用gnu工具链开发原生Windows应用的能力，值得一提的是，msys2使用archlinux上的package manager–pacman，为包管理提供了强大的支持和便利。</p>
-<h3 id="Install-msys2-and-setup-environment"><a href="#Install-msys2-and-setup-environment" class="headerlink" title="Install msys2 and setup environment"></a>Install msys2 and setup environment</h3><ol>
-<li>到官网下载msys2安装包, 选择64位 <a href="https://www.msys2.org/" target="_blank" rel="noopener">msys2官网</a></li>
-<li>傻瓜式安装</li>
-<li><p>编辑C:\msys64\etc\pacman.d\mirrorlist.mingw64文件，覆盖以下内容</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">##</span><br><span class="line">## 64-bit Mingw-w64 repository mirrorlist</span><br><span class="line">##</span><br><span class="line"></span><br><span class="line">## Primary</span><br><span class="line">## msys2.org</span><br><span class="line">Server = http://repo.msys2.org/mingw/x86_64/</span><br><span class="line">Server = https://sourceforge.net/projects/msys2/files/REPOS/MINGW/x86_64/</span><br><span class="line">Server = http://www2.futureware.at/~nickoe/msys2-mirror/mingw/x86_64/</span><br><span class="line">Server = https://mirror.yandex.ru/mirrors/msys2/mingw/x86_64/</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>运行msys2 mingw 64-bit，更新pacman</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pacman -Syu</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>安装基础开发包和图片库</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">pacman -S base-devel mingw-w64-x86_64-toolchain \</span><br><span class="line">mingw-w64-x86_64-xpm-nox mingw-w64-x86_64-libtiff mingw-w64-x86_64-giflib \</span><br><span class="line">mingw-w64-x86_64-libpng mingw-w64-x86_64-libjpeg-turbo mingw-w64-x86_64-librsvg \</span><br><span class="line">mingw-w64-x86_64-libxml2 mingw-w64-x86_64-gnutls</span><br></pre></td></tr></table></figure>
-</li>
+        <p>synchronized提供了Java中同步原语的实现<br><a id="more"></a><br>锁操作一直都被认为是相当昂贵的，但jdk1.6之后，对synchronized进行了多种优化，引入了偏向锁、轻量级锁、锁消除等机制</p>
+<h3 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h3><p>synchronized关键字使用点：</p>
+<ol>
+<li>修饰实例方法</li>
+<li>修饰类方法</li>
+<li>修饰同步块<br>经编译后同步块对应monitorenter和monitorexit字节码，对应同步块的开始和结束，值得注意的是，javac会默认生成一个异常表，用于保证monitorexit必会执行；修饰方法时，将方法的flags中添加ACC_SYNCHRONIZED标志;<br>修饰实例方法时以实例作为锁对象， 修饰类方法时以类的class作为锁对象， 修饰同步块时以给定对象作为锁对象</li>
 </ol>
-<h2 id="Download-emacs-source-code-and-compile"><a href="#Download-emacs-source-code-and-compile" class="headerlink" title="Download emacs source code and compile"></a>Download emacs source code and compile</h2><p>从(Emacs官网ftp)[<a href="http://ftp.gnu.org/gnu/emacs/]下载emacs-25.3.tar.xz文件，解压缩，进入目录" target="_blank" rel="noopener">http://ftp.gnu.org/gnu/emacs/]下载emacs-25.3.tar.xz文件，解压缩，进入目录</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">./autogen.sh PKG_CONFIG_PATH=/mingw64/lib/pkgconfig</span><br><span class="line">./configure --host=x86_64-w64-mingw32 --target=x86_64-w64-mingw32 --build=x86_64-w64-mingw32 \</span><br><span class="line">--with-wide-int --with-jpeg --with-xpm --with-png --with-tiff --with-rsvg \</span><br><span class="line">--with-xml2 --with-gnutls --with-xft \</span><br><span class="line">--without-imagemagick</span><br><span class="line">make</span><br><span class="line">make install prefix=/c/emacs-25.3-msys2</span><br></pre></td></tr></table></figure></p>
-<p>最后还要将路径C:\msys64\mingw64\bin加入到path环境变量中，emacs才能加载对应的dll, 运行C:\emacs-25.3-msys2\bin\runemacs.exe<br>OK, done.</p>
+<h3 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h3><p>JDK1.5之前synchronized属于重量级锁，基于操作系统的Mutex lock实现，线程的阻塞和恢复需要陷入内核态，但经研究发现很多同步的场景并非是非此即彼的，这由共享变量的竞争情况而定，因此锁优化引入了偏向锁、轻量级锁、锁消除等机制，这些实现都与Java对象头息息相关</p>
+<h3 id="Java对象内存布局"><a href="#Java对象内存布局" class="headerlink" title="Java对象内存布局"></a>Java对象内存布局</h3><p>Java对象在内存中的布局分为三个部分：对象头、实例数据、填充数据<br><img src="/img/2017-03-26-Java-object-memory-structure-01.png" alt=""></p>
+<ol>
+<li>Mark word<br>存储对象hashcode、GC年龄、锁标记、偏向锁、轻量级锁、重量级锁信息<br><img src="/img/2017-03-26-Java-object-memory-structure-02.png" alt="32位JVM"></li>
+<li>Class pointer<br>指向实例在方法区中对应类型的入口</li>
+<li>Array length<br>如果对象是数组类型则存在</li>
+</ol>
+<h3 id="偏向锁"><a href="#偏向锁" class="headerlink" title="偏向锁"></a>偏向锁</h3><p>假设：大部分场景中只有一个线程使用锁<br>目的：消除无竞争情况下同步开销，CAS操作都不要<br>偏向锁偏向于第一个获取锁的线程，若该锁没有被其他线程获取，则持有偏向锁的线程永远不需要同步，第一次获取偏向锁时使用CAS更新Mark word中信息，以后同一线程再次进入同步块都不用进行任何同步操作</p>
+<h3 id="轻量级锁"><a href="#轻量级锁" class="headerlink" title="轻量级锁"></a>轻量级锁</h3><p>假设：大部分的锁，在整个同步周期内不存在竞争，即多个线程轮流获取锁<br>目的：轮流获取锁的情况下，使用CAS操作避免使用互斥量的开销<br>首先在当前线程的栈帧中建立一个锁记录(Lock record), 将当前的Mark word拷贝进去，然后使用CAS操作将Mark word更新为指向Lock Record指针，如果成功，这个线程就持有了对象的轻量级锁，并且更新Mark word标志位；如果失败了，虚拟机会检查Mark word是否指向当前线程的栈帧，如果是，说明当前线程已有对象锁，接着执行同步块，否则，说明有其他线程争用同一个锁，那么轻量级锁将膨胀为重量级锁，锁标记变为10，Mark word指向互斥量的指针</p>
+<h3 id="重量级锁"><a href="#重量级锁" class="headerlink" title="重量级锁"></a>重量级锁</h3><p>操作系统底层的mutex lock</p>
 
       
     </div>
@@ -393,7 +396,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/emacs/" rel="tag"># emacs</a>
+            <a href="/tags/synchronized/" rel="tag"># synchronized</a>
           
         </div>
       
@@ -406,8 +409,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/04/10/2016-04-10-limit-input-for-EditText-with-InputFilter/" rel="next" title="Limit input for EditText with InputFilter">
-                <i class="fa fa-chevron-left"></i> Limit input for EditText with InputFilter
+              <a href="/2016/12/20/2016-12-20-install-mysql-in-centos/" rel="next" title="Install mysql in centos7">
+                <i class="fa fa-chevron-left"></i> Install mysql in centos7
               </a>
             
           </div>
@@ -416,8 +419,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/09/08/2016-09-08-quick-edit-functions-in-emacs/" rel="prev" title="Emacs中自定义快速编辑功能">
-                Emacs中自定义快速编辑功能 <i class="fa fa-chevron-right"></i>
+              <a href="/2017/04/13/2017-04-15-throttle-button-click/" rel="prev" title="使用RxJava防止button快速点击">
+                使用RxJava防止button快速点击 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -561,7 +564,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#msys2"><span class="nav-number">1.</span> <span class="nav-text">msys2</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Install-msys2-and-setup-environment"><span class="nav-number">1.1.</span> <span class="nav-text">Install msys2 and setup environment</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Download-emacs-source-code-and-compile"><span class="nav-number">2.</span> <span class="nav-text">Download emacs source code and compile</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本使用"><span class="nav-number">1.</span> <span class="nav-text">基本使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现原理"><span class="nav-number">2.</span> <span class="nav-text">实现原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java对象内存布局"><span class="nav-number">3.</span> <span class="nav-text">Java对象内存布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#偏向锁"><span class="nav-number">4.</span> <span class="nav-text">偏向锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#轻量级锁"><span class="nav-number">5.</span> <span class="nav-text">轻量级锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重量级锁"><span class="nav-number">6.</span> <span class="nav-text">重量级锁</span></a></li></ol></div>
             
 
           </div>
