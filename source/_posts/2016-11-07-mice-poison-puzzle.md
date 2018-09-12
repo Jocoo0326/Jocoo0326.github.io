@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 老鼠毒药问题
-date: 2017-11-07
+date: 2016-11-07
 categories:
 - 算法
 tags:

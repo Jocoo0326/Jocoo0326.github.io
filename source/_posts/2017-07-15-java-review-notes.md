@@ -1,7 +1,7 @@
 ---
 layout: post
-title: Java learning notes - 1
-date: 2018-07-15
+title: Java复习笔记 - 1
+date: 2017-07-15
 categories:
 - Java
 tags:
