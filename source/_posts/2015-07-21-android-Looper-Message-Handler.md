@@ -134,3 +134,9 @@ public static void loop() {
 ```
 
 * 6、ActivityThread中的消息循环：ActivityThread中有一个内部类ApplicationThread，ActivityThread通过它与ActivityManagerService进行IPC，AMS调用ApplicationThread中的方法向ActivityThread中的Handler即H对象发送消息，完成Activity的生命周期的处理；
+
+* 7、Looper.loop()为何不会卡死主线程？
+Looper.loop()->MessageQueue.next()->MessageQueue.nativePollOnce()->Looper::pollInner()(cpp)->epoll_wait
+利用了pipe/epoll机制，当MessageQueue.enqueMessage时若处于block状态会调用nativeWake->Looper::wake->write data to eventFd->epoll_wait unblocked
+
+* 8、MessageQueue.postSyncBarrier 当设置了障碍后，队列中的同步消息会停止执行，直到removeSyncBarrier被调用，默认情况下，消息都是同步的

@@ -187,7 +187,7 @@ addWorker中首先通过两个嵌套的for循环检测边界条件：
 - 若添加任务成功, 但此时线程池已停止, 则移除任务并reject, 若没有停止但没有Worker线程，则创建一个Worker进行工作;
 - 若添加任务失败，此时对应currentWorkerCount >= corePoolSize && workqueue is full， 则添加Worker线程, 若currentWorkerCount >= maximumPoolSize则reject
 
-Executors.newCachedThreadPool()用的是SynchronousQueue, SynchronousQueue的offer总是返回false, 当线程数多于corePoolSize时总是添加Worker线程
+Executors.newCachedThreadPool()用的是SynchronousQueue, SynchronousQueue的offer总是返回false, 除非遇到poll调用, Worker在空闲的时候才会调用poll，所以空闲线程会得到复用, 当线程数多于corePoolSize时总是添加Worker线程
 
 下面看一下Worker线程是如何工作的
 ``` java
